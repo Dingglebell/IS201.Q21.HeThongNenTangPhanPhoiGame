@@ -1,0 +1,17 @@
+target/
+.venv/
+
+bao_cao/*
+!bao_cao/.gitkeep
+tep_build/tai_len/*
+!tep_build/
+!tep_build/tai_len/
+!tep_build/tai_len/.gitkeep
+tep_media/tai_len/*
+!tep_media/
+!tep_media/tai_len/
+!tep_media/tai_len/.gitkeep
+
+*.class
+*.log
+*.tmp
