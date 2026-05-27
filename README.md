@@ -116,14 +116,15 @@ HeThongQuanLyNenTangPhanPhoiGame/
 src/main/resources/db.properties
 ```
 
+Sao chép `src/main/resources/db.properties.example` thành `src/main/resources/db.properties` và cập nhật thông tin kết nối.
+
 Ví dụ cấu hình:
 
 ```properties
 db.url=jdbc:oracle:thin:@//localhost:1521/orclpdb
 db.username=GAME_PLATFORM
-db.password=game123
+db.password=YOUR_PASSWORD
 ```
-
 Tùy cấu hình Oracle trên máy, `db.url` có thể cần đổi thành một trong các dạng sau:
 
 ```properties

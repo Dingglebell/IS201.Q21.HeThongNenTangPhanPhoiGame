@@ -1,0 +1,577 @@
+.root {
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+    -fx-background-color: #eef2f7;
+    -fx-text-fill: #172033;
+}
+
+.game-client {
+    -fx-background-color: #1f232a;
+}
+
+.player-topbar {
+    -fx-background-color: #0b1020;
+    -fx-padding: 14 22;
+    -fx-spacing: 14;
+    -fx-border-color: #242b38;
+    -fx-border-width: 0 0 1 0;
+}
+
+.player-topbar .nav-button {
+    -fx-alignment: CENTER;
+    -fx-padding: 10 14;
+    -fx-font-weight: 800;
+}
+
+.login-shell {
+    -fx-background-color: linear-gradient(to bottom right, #111827, #193154);
+}
+
+.login-card {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-padding: 34;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.22), 24, 0, 0, 12);
+}
+
+.app-title {
+    -fx-font-size: 25;
+    -fx-font-weight: 700;
+    -fx-text-fill: #111827;
+}
+
+.subtitle {
+    -fx-font-size: 13;
+    -fx-text-fill: #64748b;
+}
+
+.sidebar {
+    -fx-background-color: linear-gradient(to bottom, #0b1020, #141b2f);
+    -fx-padding: 22 14;
+    -fx-spacing: 8;
+}
+
+.sidebar-title {
+    -fx-font-size: 16;
+    -fx-font-weight: 700;
+    -fx-text-fill: white;
+}
+
+.game-client .sidebar-title {
+    -fx-font-size: 22;
+    -fx-text-fill: #ff149d;
+}
+
+.sidebar-subtitle {
+    -fx-font-size: 12;
+    -fx-text-fill: #a7b3c7;
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #d7deea;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10 12;
+    -fx-background-radius: 6;
+    -fx-font-size: 13;
+    -fx-cursor: hand;
+}
+
+.nav-button:hover {
+    -fx-background-color: #243149;
+    -fx-text-fill: white;
+}
+
+.game-client .nav-button {
+    -fx-text-fill: #f6f7fb;
+    -fx-font-weight: 800;
+    -fx-padding: 13 14;
+}
+
+.game-client .nav-button:hover {
+    -fx-background-color: rgba(255, 20, 157, 0.18);
+    -fx-text-fill: #ff149d;
+}
+
+.nav-button-primary {
+    -fx-background-color: linear-gradient(to right, #2563eb, #7c3aed);
+    -fx-text-fill: white;
+    -fx-font-weight: 700;
+    -fx-background-radius: 6;
+    -fx-padding: 10 16;
+    -fx-cursor: hand;
+}
+
+.content {
+    -fx-padding: 26;
+    -fx-spacing: 16;
+    -fx-background-color: #eef2f7;
+}
+
+.game-client .content {
+    -fx-padding: 32 34;
+    -fx-spacing: 22;
+    -fx-background-color: #1f232a;
+}
+
+.game-client .page-title {
+    -fx-text-fill: white;
+}
+
+.page-title {
+    -fx-font-size: 24;
+    -fx-font-weight: 700;
+    -fx-text-fill: #111827;
+}
+
+.section-title {
+    -fx-font-size: 16;
+    -fx-font-weight: 700;
+    -fx-text-fill: #1f2937;
+}
+
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-padding: 16;
+    -fx-border-color: #e5eaf3;
+    -fx-border-radius: 8;
+}
+
+.game-client .card {
+    -fx-background-color: #272c35;
+    -fx-border-color: #343b4a;
+}
+
+.game-client .card .section-title {
+    -fx-text-fill: white;
+}
+
+.hero-card {
+    -fx-background-color: linear-gradient(to right, #111827, #1d4ed8);
+    -fx-background-radius: 8;
+    -fx-padding: 24;
+    -fx-spacing: 12;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.18), 18, 0, 0, 8);
+}
+
+.game-client .hero-card {
+    -fx-background-color: linear-gradient(to right, #0f1118, #272b35);
+    -fx-border-color: #313745;
+    -fx-border-radius: 8;
+}
+
+.hero-title {
+    -fx-font-size: 26;
+    -fx-font-weight: 800;
+    -fx-text-fill: white;
+}
+
+.hero-subtitle {
+    -fx-font-size: 14;
+    -fx-text-fill: #dbeafe;
+}
+
+.game-card {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: #d9e2f1;
+    -fx-border-radius: 8;
+    -fx-padding: 14;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.10), 12, 0, 0, 5);
+}
+
+.game-client .game-card {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+    -fx-effect: none;
+}
+
+.game-card:hover {
+    -fx-translate-y: -2;
+    -fx-effect: dropshadow(gaussian, rgba(37, 99, 235, 0.22), 18, 0, 0, 8);
+}
+
+.game-client .game-card:hover {
+    -fx-translate-y: -3;
+    -fx-effect: dropshadow(gaussian, rgba(255, 20, 157, 0.25), 18, 0, 0, 8);
+}
+
+.game-cover-stack {
+    -fx-min-height: 228;
+    -fx-pref-height: 228;
+}
+
+.game-cover {
+    -fx-background-color: linear-gradient(to bottom right, #0f172a, #2563eb, #9333ea);
+    -fx-background-radius: 8;
+    -fx-padding: 28 16;
+    -fx-min-height: 112;
+    -fx-alignment: CENTER;
+    -fx-text-fill: white;
+    -fx-font-size: 20;
+    -fx-font-weight: 800;
+    -fx-wrap-text: true;
+}
+
+.game-client .game-cover {
+    -fx-background-color: linear-gradient(to bottom right, #111827, #29344f, #ff149d);
+    -fx-min-height: 228;
+    -fx-pref-height: 228;
+    -fx-font-size: 22;
+    -fx-effect: innershadow(gaussian, rgba(0,0,0,0.40), 24, 0, 0, 0);
+}
+
+.beta-ribbon {
+    -fx-background-color: #f59e0b;
+    -fx-text-fill: white;
+    -fx-font-weight: 900;
+    -fx-padding: 7 84;
+    -fx-font-size: 12;
+    -fx-background-radius: 8 8 0 0;
+}
+
+.launcher-hero {
+    -fx-background-color: linear-gradient(to bottom right, rgba(16, 24, 39, 0.95), rgba(7, 8, 12, 0.95), rgba(255, 20, 157, 0.20));
+    -fx-background-radius: 8;
+    -fx-min-height: 328;
+    -fx-padding: 26;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 18, 0, 0, 8);
+}
+
+.launcher-hero-title {
+    -fx-text-fill: white;
+    -fx-font-size: 21;
+    -fx-font-weight: 900;
+}
+
+.launcher-hero-body {
+    -fx-text-fill: #f1f5f9;
+    -fx-font-size: 14;
+    -fx-font-weight: 600;
+}
+
+.launcher-dots {
+    -fx-text-fill: #d1d5db;
+    -fx-font-size: 20;
+    -fx-alignment: CENTER;
+}
+
+.launcher-section-title {
+    -fx-text-fill: white;
+    -fx-font-size: 30;
+    -fx-font-weight: 900;
+}
+
+.launcher-arrows {
+    -fx-text-fill: #d1d5db;
+    -fx-font-size: 30;
+    -fx-font-weight: 900;
+}
+
+.player-metric {
+    -fx-background-color: #272c35;
+    -fx-background-radius: 8;
+    -fx-padding: 14 18;
+    -fx-min-width: 150;
+}
+
+.player-metric-value {
+    -fx-text-fill: white;
+    -fx-font-size: 22;
+    -fx-font-weight: 900;
+}
+
+.player-metric-label {
+    -fx-text-fill: #9ca3af;
+    -fx-font-size: 11;
+    -fx-font-weight: 800;
+}
+
+.player-profile {
+    -fx-background-color: #272c35;
+    -fx-background-radius: 8;
+    -fx-padding: 14;
+}
+
+.player-profile-name {
+    -fx-text-fill: white;
+    -fx-font-weight: 900;
+}
+
+
+
+
+.game-client .stat-label {
+    -fx-text-fill: #cbd5e1;
+    -fx-font-weight: 700;
+}
+
+.game-client .stat-value {
+    -fx-text-fill: white;
+    -fx-font-size: 15;
+}
+
+.game-cover-image {
+    -fx-background-radius: 8;
+    -fx-effect: innershadow(gaussian, rgba(0,0,0,0.40), 24, 0, 0, 0);
+}
+
+.developer-tabs {
+    -fx-background-color: transparent;
+}
+
+.old-price {
+    -fx-fill: #94a3b8;
+    -fx-font-size: 12;
+}
+
+.discount-pill {
+    -fx-background-color: #16a34a;
+    -fx-background-radius: 5;
+    -fx-padding: 3 6;
+    -fx-text-fill: white;
+    -fx-font-size: 11;
+    -fx-font-weight: 900;
+}
+
+.stat-value {
+    -fx-font-size: 24;
+    -fx-font-weight: 800;
+    -fx-text-fill: #111827;
+}
+
+.stat-label {
+    -fx-font-size: 12;
+    -fx-text-fill: #64748b;
+}
+
+.status-pill {
+    -fx-background-radius: 999;
+    -fx-padding: 4 8;
+    -fx-font-size: 11;
+    -fx-font-weight: 700;
+}
+
+.input {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #d8e0ee;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 9 10;
+}
+
+.game-client .input {
+    -fx-background-color: #1b2028;
+    -fx-border-color: #394150;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: #8e98aa;
+}
+
+.danger-button {
+    -fx-background-color: #dc2626;
+    -fx-text-fill: white;
+    -fx-font-weight: 700;
+    -fx-background-radius: 6;
+    -fx-padding: 10 16;
+    -fx-cursor: hand;
+}
+
+.secondary-button {
+    -fx-background-color: #e8edf7;
+    -fx-text-fill: #1f2937;
+    -fx-font-weight: 700;
+    -fx-background-radius: 6;
+    -fx-padding: 10 16;
+    -fx-cursor: hand;
+}
+
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #e5eaf3;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #edf3ff;
+    -fx-background-radius: 8 8 0 0;
+}
+
+.game-client .table-view {
+    -fx-background-color: #20252d;
+    -fx-control-inner-background: #20252d;
+    -fx-table-cell-border-color: #343b4a;
+    -fx-border-color: #343b4a;
+}
+
+.game-client .table-view .column-header-background {
+    -fx-background-color: #2b313c;
+}
+
+.game-client .table-view .column-header,
+.game-client .table-view .filler {
+    -fx-background-color: #2b313c;
+}
+
+.game-client .table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: 800;
+}
+
+.game-client .table-row-cell {
+    -fx-background-color: #20252d;
+    -fx-text-background-color: #e5e7eb;
+}
+
+.game-client .table-row-cell:odd {
+    -fx-background-color: #252a33;
+}
+
+.game-client .table-row-cell:selected {
+    -fx-background-color: rgba(255, 20, 157, 0.34);
+}
+
+.game-client .combo-box,
+.game-client .date-picker,
+.game-client .spinner {
+    -fx-background-color: #1b2028;
+    -fx-border-color: #394150;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.game-client .combo-box .list-cell,
+.game-client .date-picker .text-field,
+.game-client .spinner .text-field {
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+}
+
+.game-client .combo-box-popup .list-view {
+    -fx-background-color: #1b2028;
+    -fx-border-color: #394150;
+}
+
+.game-client .combo-box-popup .list-cell {
+    -fx-background-color: #1b2028;
+    -fx-text-fill: white;
+}
+
+.game-client .combo-box-popup .list-cell:hover {
+    -fx-background-color: rgba(255, 20, 157, 0.22);
+}
+
+.game-detail-dialog {
+    -fx-background-color: #272c35;
+    -fx-padding: 16;
+    -fx-min-width: 620;
+}
+
+
+/* Login launcher skin */
+.login-shell {
+    -fx-background-color: #1f232a;
+}
+
+.login-layout {
+    -fx-background-color: #1f232a;
+}
+
+.login-showcase {
+    -fx-background-color: linear-gradient(to bottom right, rgba(16, 24, 39, 0.96), rgba(7, 8, 12, 0.96), rgba(255, 20, 157, 0.22));
+    -fx-background-radius: 8;
+    -fx-padding: 30;
+    -fx-min-height: 620;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.34), 22, 0, 0, 10);
+}
+
+.login-logo {
+    -fx-font-size: 28;
+    -fx-font-weight: 900;
+    -fx-text-fill: #ff149d;
+}
+
+.login-headline {
+    -fx-font-size: 34;
+    -fx-font-weight: 900;
+    -fx-text-fill: white;
+}
+
+.login-copy {
+    -fx-font-size: 14;
+    -fx-font-weight: 600;
+    -fx-text-fill: #e5e7eb;
+}
+
+.login-db-status {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-background-radius: 999;
+    -fx-padding: 9 14;
+    -fx-text-fill: #d1fae5;
+    -fx-font-weight: 800;
+}
+
+.login-cover-chip {
+    -fx-background-color: linear-gradient(to bottom right, #111827, #29344f, #ff149d);
+    -fx-background-radius: 8;
+    -fx-padding: 16;
+    -fx-min-width: 132;
+    -fx-min-height: 120;
+    -fx-effect: innershadow(gaussian, rgba(0,0,0,0.36), 18, 0, 0, 0);
+}
+
+.login-cover-title {
+    -fx-text-fill: white;
+    -fx-font-size: 15;
+    -fx-font-weight: 900;
+    -fx-wrap-text: true;
+}
+
+.login-cover-tag {
+    -fx-text-fill: #fbbf24;
+    -fx-font-size: 10;
+    -fx-font-weight: 900;
+}
+
+.login-card {
+    -fx-background-color: #272c35;
+    -fx-background-radius: 8;
+    -fx-border-color: #343b4a;
+    -fx-border-radius: 8;
+    -fx-padding: 30;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.32), 24, 0, 0, 12);
+}
+
+.login-card .app-title,
+.login-card .section-title {
+    -fx-text-fill: white;
+}
+
+.login-card .subtitle {
+    -fx-text-fill: #a7b3c7;
+}
+
+.login-card .stat-label {
+    -fx-text-fill: #cbd5e1;
+}
+
+.login-card .input {
+    -fx-background-color: #1b2028;
+    -fx-border-color: #394150;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: #8e98aa;
+}
+
+.login-demo-card {
+    -fx-background-color: #1f242d;
+    -fx-background-radius: 8;
+    -fx-border-color: #343b4a;
+    -fx-border-radius: 8;
+    -fx-padding: 14;
+}
+
+.login-demo-username {
+    -fx-text-fill: white;
+    -fx-font-weight: 900;
+}
