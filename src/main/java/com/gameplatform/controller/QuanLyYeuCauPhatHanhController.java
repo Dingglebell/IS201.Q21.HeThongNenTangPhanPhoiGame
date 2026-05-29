@@ -12,6 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class QuanLyYeuCauPhatHanhController {
+
+    private static final int MUC_CO_LAP_XU_LY_DONG_THOI = Connection.TRANSACTION_READ_COMMITTED;
+
+    private static final int DEMO_DO_TRE_LOST_UPDATE_GIAY = 5;
+
     private static final String REQUEST_SELECT = """
             SELECT yc.MaYeuCau,
                    yc.MaNPT,
@@ -57,64 +62,95 @@ public final class QuanLyYeuCauPhatHanhController {
     }
 
     public void approve(int requestId, int employeeId) throws SQLException {
-        try (Connection connection = Database.getConnection();
-             CallableStatement statement = connection.prepareCall("{call SP_XuLyYeuCauPhatHanh(?, ?, ?, ?)}")) {
-            statement.setInt(1, requestId);
-            statement.setInt(2, employeeId);
-            statement.setString(3, "Đã duyệt");
-            statement.setString(4, null);
-            statement.execute();
-        }
+        xuLyYeuCauPhatHanh(requestId, employeeId, "Đã duyệt", null);
     }
 
     public void reject(int requestId, int employeeId, String reason) throws SQLException {
-        try (Connection connection = Database.getConnection();
-             CallableStatement statement = connection.prepareCall("{call SP_XuLyYeuCauPhatHanh(?, ?, ?, ?)}")) {
-            statement.setInt(1, requestId);
-            statement.setInt(2, employeeId);
-            statement.setString(3, "Từ chối");
-            statement.setString(4, reason);
-            statement.execute();
+        xuLyYeuCauPhatHanh(requestId, employeeId, "Từ chối", reason);
+    }
+
+    private void xuLyYeuCauPhatHanh(int requestId, int employeeId, String status, String rejectReason) throws SQLException {
+        if (MUC_CO_LAP_XU_LY_DONG_THOI == Connection.TRANSACTION_SERIALIZABLE) {
+            xuLyYeuCauPhatHanhAnToan(requestId, employeeId, status, rejectReason);
+        } else {
+            xuLyYeuCauPhatHanhBanKhongAnToan(requestId, employeeId, status, rejectReason);
         }
     }
 
-    public void approveLegacy(int requestId, int employeeId) throws SQLException {
-        try (Connection connection = Database.getConnection();
-             PreparedStatement statement = connection.prepareStatement("""
-                     UPDATE YeuCauPhatHanh
-                     SET TrangThai = 'Đã duyệt',
-                         MaNVXuLy = ?,
-                         LyDoTuChoi = NULL,
-                         NgayXuLy = SYSDATE
-                     WHERE MaYeuCau = ?
-                       AND TrangThai = 'Chờ duyệt'
-                     """)) {
-            statement.setInt(1, employeeId);
-            statement.setInt(2, requestId);
-            if (statement.executeUpdate() == 0) {
-                throw new SQLException("Yêu cầu không còn ở trạng thái chờ duyệt.");
+    private void xuLyYeuCauPhatHanhAnToan(int requestId, int employeeId, String status, String rejectReason) throws SQLException {
+        try (Connection connection = Database.getConnection()) {
+            connection.setAutoCommit(false);
+            connection.setTransactionIsolation(MUC_CO_LAP_XU_LY_DONG_THOI);
+            try (CallableStatement statement = connection.prepareCall("{call SP_XuLyYeuCauPhatHanh(?, ?, ?, ?)}")) {
+                docTrangThaiVaChoDemo(connection, requestId);
+                statement.setInt(1, requestId);
+                statement.setInt(2, employeeId);
+                statement.setString(3, status);
+                statement.setString(4, rejectReason);
+                statement.execute();
+                connection.commit();
+            } catch (SQLException exception) {
+                connection.rollback();
+                throw friendlyLostUpdateException(exception);
             }
         }
     }
 
-    public void rejectLegacy(int requestId, int employeeId, String reason) throws SQLException {
-        try (Connection connection = Database.getConnection();
-             PreparedStatement statement = connection.prepareStatement("""
+    private void xuLyYeuCauPhatHanhBanKhongAnToan(int requestId, int employeeId, String status, String rejectReason) throws SQLException {
+        try (Connection connection = Database.getConnection()) {
+            connection.setAutoCommit(false);
+            connection.setTransactionIsolation(MUC_CO_LAP_XU_LY_DONG_THOI);
+            try (PreparedStatement statement = connection.prepareStatement("""
                      UPDATE YeuCauPhatHanh
-                     SET TrangThai = 'Từ chối',
+                     SET TrangThai = ?,
                          MaNVXuLy = ?,
                          LyDoTuChoi = ?,
                          NgayXuLy = SYSDATE
                      WHERE MaYeuCau = ?
-                       AND TrangThai = 'Chờ duyệt'
                      """)) {
-            statement.setInt(1, employeeId);
-            statement.setString(2, reason);
-            statement.setInt(3, requestId);
-            if (statement.executeUpdate() == 0) {
-                throw new SQLException("Yêu cầu không còn ở trạng thái chờ duyệt.");
+                docTrangThaiVaChoDemo(connection, requestId);
+                statement.setString(1, status);
+                statement.setInt(2, employeeId);
+                statement.setString(3, "Từ chối".equals(status) ? rejectReason : null);
+                statement.setInt(4, requestId);
+                statement.executeUpdate();
+                connection.commit();
+            } catch (SQLException exception) {
+                connection.rollback();
+                throw exception;
             }
         }
+    }
+
+    private void docTrangThaiVaChoDemo(Connection connection, int requestId) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement("""
+                SELECT TrangThai
+                FROM YeuCauPhatHanh
+                WHERE MaYeuCau = ?
+                """)) {
+            statement.setInt(1, requestId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    resultSet.getString("TrangThai");
+                }
+            }
+        }
+        if (DEMO_DO_TRE_LOST_UPDATE_GIAY > 0) {
+            try {
+                Thread.sleep(DEMO_DO_TRE_LOST_UPDATE_GIAY * 1000L);
+            } catch (InterruptedException exception) {
+                Thread.currentThread().interrupt();
+                throw new SQLException("Demo Lost Update bị ngắt trong lúc chờ.", exception);
+            }
+        }
+    }
+
+    private SQLException friendlyLostUpdateException(SQLException exception) {
+        String message = exception.getMessage() == null ? "" : exception.getMessage();
+        if (exception.getErrorCode() == 8177 || message.contains("ORA-08177") || message.contains("-20104")) {
+            return new SQLException("Yêu cầu phát hành đã bị phiên khác xử lý trước. Hãy tải lại danh sách để tránh Lost Update.", exception);
+        }
+        return exception;
     }
 
     private List<YeuCauPhatHanh> query(String sql) throws SQLException {
@@ -149,6 +185,7 @@ public final class QuanLyYeuCauPhatHanhController {
         );
     }
 }
+
 
 
 

@@ -15,6 +15,7 @@ public final class QuanLyTicketHoTroController {
     private static final String TICKET_SELECT = """
             SELECT t.MaTicket,
                    t.LoaiYeuCau,
+                   t.NoiDung,
                    nc.TenHienThi,
                    g.TenGame,
                    TO_CHAR(t.MaGD) AS MaGDText,
@@ -116,6 +117,7 @@ public final class QuanLyTicketHoTroController {
         return new ThongTinTicket(
                 resultSet.getInt("MaTicket"),
                 resultSet.getString("LoaiYeuCau"),
+                resultSet.getString("NoiDung"),
                 resultSet.getString("TenHienThi"),
                 resultSet.getString("TenGame"),
                 resultSet.getString("MaGDText"),
@@ -127,6 +129,7 @@ public final class QuanLyTicketHoTroController {
         );
     }
 }
+
 
 
 

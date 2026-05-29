@@ -3,3 +3,4 @@ db.url=jdbc:oracle:thin:@localhost:1521/orclpdb
 db.username=GAME_PLATFORM
 
 db.password=YOUR_PASSWORD
+

@@ -98,11 +98,16 @@ HeThongQuanLyNenTangPhanPhoiGame/
 │           │   └── app.css
 │           └── db.properties
 ├── sql/
-│   ├── 00_create_user.sql
-│   ├── 01_schema.sql
-│   ├── 02_seed.sql
-│   ├── 03_demo_queries.sql
-│   └── 99_full_setup.sql
+│   ├── 00TaoUserGamePlatform.sql
+│   ├── 01XoaSchemaCu.sql
+│   ├── 02TaoSequence.sql
+│   ├── 03TaoBang.sql
+│   ├── 04TaoRangBuoc.sql
+│   ├── 05TaoTrigger.sql
+│   ├── 06TaoStoredFunction.sql
+│   ├── 07TaoStoredProcedure.sql
+│   ├── 08NapDuLieuMau.sql
+│   └── 99CaiDatDayDu.sql
 ├── scripts/
 ├── pom.xml
 └── README.md
@@ -150,12 +155,12 @@ SELECT name FROM v$services;
 Mở Oracle SQL Developer, đăng nhập bằng tài khoản có quyền DBA hoặc tài khoản có quyền tạo user/schema, sau đó chạy file:
 
 ```text
-sql/99_full_setup.sql
+sql/99CaiDatDayDu.sql
 ```
 
 Nên chạy bằng **Run Script** hoặc phím `F5`, không chạy từng dòng bằng `Ctrl + Enter`.
 
-File `99_full_setup.sql` dùng để thiết lập toàn bộ database cho demo, bao gồm:
+File `99CaiDatDayDu.sql` dùng để thiết lập toàn bộ database cho demo, bao gồm:
 
 - Tạo user/schema.
 - Tạo bảng.
@@ -163,7 +168,6 @@ File `99_full_setup.sql` dùng để thiết lập toàn bộ database cho demo,
 - Tạo trigger.
 - Tạo stored procedure.
 - Tạo stored function.
-- Tạo view báo cáo.
 - Thêm dữ liệu mẫu.
 
 ### Cách 2: Chạy từng file SQL
@@ -171,21 +175,31 @@ File `99_full_setup.sql` dùng để thiết lập toàn bộ database cho demo,
 Nếu muốn chạy từng bước, thực hiện theo thứ tự:
 
 ```text
-sql/00_create_user.sql
-sql/01_schema.sql
-sql/02_seed.sql
-sql/03_demo_queries.sql
+sql/00TaoUserGamePlatform.sql
+sql/01XoaSchemaCu.sql
+sql/02TaoSequence.sql
+sql/03TaoBang.sql
+sql/04TaoRangBuoc.sql
+sql/05TaoTrigger.sql
+sql/06TaoStoredFunction.sql
+sql/07TaoStoredProcedure.sql
+sql/08NapDuLieuMau.sql
 ```
 
 Trong đó:
 
 | File | Ý nghĩa |
 |---|---|
-| `00_create_user.sql` | Tạo user Oracle cho hệ thống |
-| `01_schema.sql` | Tạo bảng, ràng buộc, trigger, procedure, function, view |
-| `02_seed.sql` | Thêm dữ liệu mẫu |
-| `03_demo_queries.sql` | Các câu truy vấn kiểm tra/demo |
-| `99_full_setup.sql` | File tổng hợp để setup nhanh |
+| `00TaoUserGamePlatform.sql` | Tạo user/schema `GAME_PLATFORM` |
+| `01XoaSchemaCu.sql` | Xóa object cũ để chạy setup lại sạch |
+| `02TaoSequence.sql` | Tạo sequence sinh mã tự động |
+| `03TaoBang.sql` | Tạo bảng dữ liệu |
+| `04TaoRangBuoc.sql` | Gắn khóa chính, khóa ngoại, unique, check và index nghiệp vụ |
+| `05TaoTrigger.sql` | Tạo trigger xử lý nghiệp vụ tự động |
+| `06TaoStoredFunction.sql` | Tạo stored function tính giá, kiểm tra mã giảm giá, doanh thu |
+| `07TaoStoredProcedure.sql` | Tạo stored procedure cho đăng ký, thanh toán, duyệt phát hành, ticket |
+| `08NapDuLieuMau.sql` | Thêm dữ liệu mẫu phục vụ demo |
+| `99CaiDatDayDu.sql` | File tổng hợp để setup nhanh |
 
 ## 7. Kiểm tra database sau khi setup
 
@@ -202,7 +216,7 @@ Chạy thử:
 SELECT * FROM TaiKhoan;
 SELECT * FROM Game;
 SELECT * FROM YeuCauPhatHanh;
-SELECT * FROM V_BaoCaoDoanhThuNenTang;
+SELECT * FROM GiaoDich;
 ```
 
 Nếu các câu lệnh trên trả dữ liệu, database đã sẵn sàng.
@@ -312,16 +326,14 @@ Mật khẩu chung cho các tài khoản demo:
 | `SP_XacNhanThanhToan` | Xác nhận kết quả thanh toán |
 | `SP_XuLyTicket` | Xử lý ticket hỗ trợ |
 
-### Stored Function / View
+### Stored Function
 
 | Đối tượng | Ý nghĩa |
 |---|---|
 | `SF_TinhGiaHienTai` | Tính giá hiện tại của game sau khuyến mãi |
 | `SF_KiemTraSoHuuGame` | Kiểm tra người chơi đã sở hữu game hay chưa |
 | `SF_TinhDoanhThuNPT` | Tính doanh thu nhà phát triển |
-| `V_BaoCaoDoanhThuNenTang` | View báo cáo doanh thu nền tảng |
-| `V_BaoCaoDoanhThuNPT` | View báo cáo doanh thu nhà phát triển |
-| `V_GameBanChay` | View thống kê game bán chạy |
+| `SF_TongChiTieuNguoiChoi` | Tính tổng chi tiêu của người chơi |
 
 ## 12. Lỗi thường gặp
 
@@ -406,3 +418,6 @@ Nhóm thực hiện đồ án:
 ## 15. Giấy phép
 
 Project được xây dựng phục vụ mục đích học tập và demo đồ án môn học.
+
+
+

@@ -7,6 +7,14 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public final class Database {
+    static {
+        try {
+            Class.forName("oracle.jdbc.OracleDriver");
+        } catch (ClassNotFoundException exception) {
+            throw new ExceptionInInitializerError("Không tìm thấy Oracle JDBC driver ojdbc11 trong classpath.");
+        }
+    }
+
     private Database() {
     }
 
@@ -26,4 +34,5 @@ public final class Database {
         }
     }
 }
+
 

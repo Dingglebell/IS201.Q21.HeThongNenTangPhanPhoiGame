@@ -31,7 +31,6 @@ import com.gameplatform.model.ThongTinTicket;
 import com.gameplatform.model.ThongTinGiaoDich;
 import com.gameplatform.model.ThongTinNguoiDung;
 
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
@@ -631,13 +630,13 @@ public final class MainView extends BorderPane {
         String normalized = fileName.replace("\\", "/");
         String migrated = normalized;
         if (normalized.startsWith("images/")) {
-            migrated = "anh_bia_game/" + normalized.substring("images/".length());
+            migrated = "anhBiaGame/" + normalized.substring("images/".length());
         } else if (normalized.startsWith("media/uploads/")) {
-            migrated = "tep_media/tai_len/" + normalized.substring("media/uploads/".length());
+            migrated = "tepMedia/taiLen/" + normalized.substring("media/uploads/".length());
         } else if (normalized.startsWith("builds/uploads/")) {
-            migrated = "tep_build/tai_len/" + normalized.substring("builds/uploads/".length());
+            migrated = "tepBuild/taiLen/" + normalized.substring("builds/uploads/".length());
         } else if (normalized.startsWith("builds/")) {
-            migrated = "tep_build/" + normalized.substring("builds/".length());
+            migrated = "tepBuild/" + normalized.substring("builds/".length());
         }
         return projectRoot.resolve(migrated).normalize();
     }
@@ -970,7 +969,7 @@ public final class MainView extends BorderPane {
         gameBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(GameTrongThuVien item) {
-                return item == null ? "Không chọn game" : item.title() + " (#" + item.gameId() + ")";
+                return item == null ? "" : item.title() + " (#" + item.gameId() + ")";
             }
 
             @Override
@@ -979,9 +978,7 @@ public final class MainView extends BorderPane {
             }
         });
         try {
-            gameBox.getItems().add(null);
             gameBox.getItems().addAll(quanLyThongTinGameController.findLibrary(session.profileId()));
-            gameBox.getSelectionModel().selectFirst();
         } catch (SQLException exception) {
             content.getChildren().add(errorCard("Không tải được danh sách game trong thư viện", exception));
         }
@@ -1021,6 +1018,7 @@ public final class MainView extends BorderPane {
         table.getColumns().addAll(
                 UiUtils.stringColumn("Mã", 60, ticket -> String.valueOf(ticket.ticketId())),
                 UiUtils.stringColumn("Loại", 120, ThongTinTicket::type),
+                UiUtils.stringColumn("Nội dung", 260, ticket -> safe(ticket.content())),
                 UiUtils.stringColumn("Người chơi", 130, ThongTinTicket::playerName),
                 UiUtils.stringColumn("Game", 140, ticket -> safe(ticket.gameTitle())),
                 UiUtils.stringColumn("GD", 80, ticket -> safe(ticket.transactionId())),
@@ -1135,9 +1133,9 @@ public final class MainView extends BorderPane {
         description.setPromptText("Mô tả game");
         description.setPrefRowCount(4);
         TextField version = input("Tên phiên bản, ví dụ 1.0.0");
-        TextField file = input("File bản build, ví dụ tep_build/tai_len/game.zip");
+        TextField file = input("File bản build, ví dụ tepBuild/taiLen/game.zip");
         TextField size = input("Dung lượng tối thiểu (MB)");
-        TextField cover = input("Ảnh bìa, ví dụ tep_media/tai_len/cover.jpg");
+        TextField cover = input("Ảnh bìa, ví dụ tepMedia/taiLen/cover.jpg");
         Button chooseCover = UiUtils.secondaryButton("Chọn ảnh bìa");
         Button chooseBuild = UiUtils.secondaryButton("Chọn file build");
         chooseCover.setOnAction(event -> {
@@ -1557,6 +1555,34 @@ public final class MainView extends BorderPane {
         }
     }
 
+    private String lowerCamelUploadName(File source, String fallbackStem) {
+        String originalName = source.getName();
+        int dotIndex = originalName.lastIndexOf('.');
+        String rawStem = dotIndex > 0 ? originalName.substring(0, dotIndex) : originalName;
+        String extension = dotIndex > 0 ? originalName.substring(dotIndex).toLowerCase() : "";
+        String[] parts = rawStem.replaceAll("[^a-zA-Z0-9]+", " ").trim().split("\\s+");
+        StringBuilder builder = new StringBuilder();
+        for (String part : parts) {
+            if (part.isBlank()) {
+                continue;
+            }
+            String lower = part.toLowerCase();
+            if (builder.isEmpty()) {
+                if (Character.isDigit(lower.charAt(0))) {
+                    builder.append(fallbackStem);
+                }
+                builder.append(lower);
+            } else {
+                builder.append(Character.toUpperCase(lower.charAt(0))).append(lower.substring(1));
+            }
+        }
+        if (builder.isEmpty()) {
+            builder.append(fallbackStem);
+        }
+        builder.append(System.currentTimeMillis());
+        return builder.append(extension).toString();
+    }
+
     private String chooseAndCopyImage() throws IOException {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Chọn ảnh game");
@@ -1565,9 +1591,9 @@ public final class MainView extends BorderPane {
         if (source == null) {
             return null;
         }
-        Path uploadDir = Path.of("tep_media", "tai_len");
+        Path uploadDir = Path.of("tepMedia", "taiLen");
         Files.createDirectories(uploadDir);
-        String fileName = System.currentTimeMillis() + "-" + source.getName().replaceAll("[^a-zA-Z0-9._-]", "_");
+        String fileName = lowerCamelUploadName(source, "anhTaiLen");
         Path target = uploadDir.resolve(fileName);
         Files.copy(source.toPath(), target, StandardCopyOption.REPLACE_EXISTING);
         return target.toString().replace("\\", "/");
@@ -1584,9 +1610,9 @@ public final class MainView extends BorderPane {
         if (source == null) {
             return null;
         }
-        Path uploadDir = Path.of("tep_build", "tai_len");
+        Path uploadDir = Path.of("tepBuild", "taiLen");
         Files.createDirectories(uploadDir);
-        String fileName = System.currentTimeMillis() + "-" + source.getName().replaceAll("[^a-zA-Z0-9._-]", "_");
+        String fileName = lowerCamelUploadName(source, "banBuildTaiLen");
         Path target = uploadDir.resolve(fileName);
         Files.copy(source.toPath(), target, StandardCopyOption.REPLACE_EXISTING);
         return target.toString().replace("\\", "/");
@@ -2499,7 +2525,7 @@ public final class MainView extends BorderPane {
         search.setOnAction(event -> reload.run());
         export.setOnAction(event -> {
             try {
-                Path file = quanLyDoanhThuController.xuatCsv(developerId == null ? "platform-revenue" : "developer-revenue",
+                Path file = quanLyDoanhThuController.xuatCsv(developerId == null ? "platformRevenue" : "developerRevenue",
                         List.copyOf(table.getItems()));
                 UiUtils.showInfo("Đã xuất báo cáo", "File CSV: " + file);
             } catch (Exception exception) {
@@ -2651,10 +2677,21 @@ public final class MainView extends BorderPane {
     private void showSupportTickets() {
         VBox content = page("Quản lý ticket");
         TableView<ThongTinTicket> table = ticketTable();
+        TextArea requestContent = new TextArea();
+        requestContent.getStyleClass().add("input");
+        requestContent.setPromptText("Chọn ticket để xem nội dung yêu cầu");
+        requestContent.setPrefRowCount(5);
+        requestContent.setEditable(false);
+        requestContent.setWrapText(true);
         TextArea response = new TextArea();
         response.getStyleClass().add("input");
         response.setPromptText("Nội dung phản hồi");
         response.setPrefRowCount(3);
+        response.setWrapText(true);
+        table.getSelectionModel().selectedItemProperty().addListener((observable, oldTicket, selectedTicket) -> {
+            requestContent.setText(selectedTicket == null ? "" : safe(selectedTicket.content()));
+            response.setText(selectedTicket == null ? "" : safe(selectedTicket.response()));
+        });
         Button take = UiUtils.secondaryButton("Nhận xử lý");
         Button phanHoiTicket = UiUtils.primaryButton("Phản hồi và đóng ticket");
         boolean canHandle = session.isVaiTroNhanVien(VaiTroNhanVien.CSKH);
@@ -2680,6 +2717,10 @@ public final class MainView extends BorderPane {
                 return;
             }
             try {
+                if (response.getText().isBlank()) {
+                    UiUtils.showInfo("Thiếu nội dung phản hồi", "Vui lòng nhập nội dung phản hồi trước khi đóng ticket.");
+                    return;
+                }
                 quanLyTicketHoTroController.phanHoiTicket(selected.ticketId(), session.profileId(), response.getText());
                 response.clear();
                 table.getItems().setAll(quanLyTicketHoTroController.traCuuTatCaTicket());
@@ -2693,7 +2734,10 @@ public final class MainView extends BorderPane {
             content.getChildren().add(errorCard("Không tải được ticket", exception));
         }
         VBox form = UiUtils.card();
-        form.getChildren().addAll(UiUtils.sectionTitle("Nghiệp vụ CSKH"), response, new HBox(10, take, phanHoiTicket));
+        form.getChildren().addAll(UiUtils.sectionTitle("Nghiệp vụ CSKH"),
+                UiUtils.formRow("Nội dung ticket", requestContent),
+                UiUtils.formRow("Nội dung phản hồi", response),
+                new HBox(10, take, phanHoiTicket));
         content.getChildren().addAll(table, form);
         setPage(content);
     }
@@ -2722,6 +2766,7 @@ public final class MainView extends BorderPane {
         return value == null ? "" : value;
     }
 }
+
 
 
 

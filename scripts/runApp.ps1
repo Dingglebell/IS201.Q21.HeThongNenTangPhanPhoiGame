@@ -8,7 +8,7 @@ $mavenCandidates = @(
 
 Set-Location $projectRoot
 
-New-Item -ItemType Directory -Force -Path "bao_cao", "tep_build\tai_len", "tep_media\tai_len", "anh_bia_game" | Out-Null
+New-Item -ItemType Directory -Force -Path "baoCao", "tepBuild\taiLen", "tepMedia\taiLen", "anhBiaGame" | Out-Null
 
 foreach ($maven in $mavenCandidates) {
     $command = Get-Command $maven -ErrorAction SilentlyContinue
@@ -23,3 +23,5 @@ foreach ($maven in $mavenCandidates) {
 }
 
 throw "Không tìm thấy Maven. Hãy cài Maven hoặc thêm mvn vào PATH."
+
+

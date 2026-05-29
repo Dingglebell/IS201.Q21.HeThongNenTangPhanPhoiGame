@@ -43,9 +43,9 @@ public final class QuanLyDoanhThuController {
     }
 
     public Path xuatCsv(String filePrefix, List<DongBaoCaoDoanhThu> rows) throws IOException {
-        Path directory = Path.of("bao_cao");
+        Path directory = Path.of("baoCao");
         Files.createDirectories(directory);
-        Path file = directory.resolve(filePrefix + "-" + System.currentTimeMillis() + ".csv");
+        Path file = directory.resolve(filePrefix + System.currentTimeMillis() + ".csv");
         StringBuilder builder = new StringBuilder();
         builder.append('\uFEFF');
         builder.append("MaGame,TenGame,NhaPhatTrien,SoLuongBan,DoanhThuGoc,DoanhThuNPT,DoanhThuNenTang\n");
@@ -82,29 +82,36 @@ public final class QuanLyDoanhThuController {
                 ORDER BY DoanhThuGoc DESC
                 """;
         List<DongBaoCaoDoanhThu> rows = new ArrayList<>();
-        try (Connection connection = Database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setDate(1, Date.valueOf(fromDate));
-            statement.setDate(2, Date.valueOf(toDate));
-            if (developerId == null) {
-                statement.setNull(3, java.sql.Types.NUMERIC);
-                statement.setNull(4, java.sql.Types.NUMERIC);
-            } else {
-                statement.setInt(3, developerId);
-                statement.setInt(4, developerId);
-            }
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    rows.add(new DongBaoCaoDoanhThu(
-                            resultSet.getInt("MaGame"),
-                            resultSet.getString("TenGame"),
-                            resultSet.getString("TenNPT"),
-                            resultSet.getInt("SoLuongBan"),
-                            resultSet.getBigDecimal("DoanhThuGoc"),
-                            resultSet.getBigDecimal("DoanhThuNPT"),
-                            resultSet.getBigDecimal("DoanhThuNenTang")
-                    ));
+        try (Connection connection = Database.getConnection()) {
+            connection.setAutoCommit(false);
+            connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setDate(1, Date.valueOf(fromDate));
+                statement.setDate(2, Date.valueOf(toDate));
+                if (developerId == null) {
+                    statement.setNull(3, java.sql.Types.NUMERIC);
+                    statement.setNull(4, java.sql.Types.NUMERIC);
+                } else {
+                    statement.setInt(3, developerId);
+                    statement.setInt(4, developerId);
                 }
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        rows.add(new DongBaoCaoDoanhThu(
+                                resultSet.getInt("MaGame"),
+                                resultSet.getString("TenGame"),
+                                resultSet.getString("TenNPT"),
+                                resultSet.getInt("SoLuongBan"),
+                                resultSet.getBigDecimal("DoanhThuGoc"),
+                                resultSet.getBigDecimal("DoanhThuNPT"),
+                                resultSet.getBigDecimal("DoanhThuNenTang")
+                        ));
+                    }
+                }
+                connection.commit();
+            } catch (SQLException exception) {
+                connection.rollback();
+                throw exception;
             }
         }
         return rows;
@@ -117,6 +124,7 @@ public final class QuanLyDoanhThuController {
         return "\"" + value.replace("\"", "\"\"") + "\"";
     }
 }
+
 
 
 

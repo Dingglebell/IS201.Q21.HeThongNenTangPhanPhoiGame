@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public record ThongTinTicket(
         int ticketId,
         String type,
+        String content,
         String playerName,
         String gameTitle,
         String transactionId,
@@ -16,6 +17,7 @@ public record ThongTinTicket(
 ) {
     public ThongTinTicket {
         type = VietnameseText.repair(type);
+        content = VietnameseText.repair(content);
         playerName = VietnameseText.repair(playerName);
         gameTitle = VietnameseText.repair(gameTitle);
         transactionId = VietnameseText.repair(transactionId);
@@ -24,5 +26,6 @@ public record ThongTinTicket(
         response = VietnameseText.repair(response);
     }
 }
+
 
 

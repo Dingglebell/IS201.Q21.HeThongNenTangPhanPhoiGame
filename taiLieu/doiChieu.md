@@ -37,7 +37,7 @@ Package `controller` là lớp điều khiển nghiệp vụ/use case và cũng 
 
 ## Bảng dữ liệu
 
-`sql/01_tao_cau_truc_csdl.sql` tạo các bảng theo mô hình quan hệ trong tài liệu HQTCSDL:
+Các file `sql/02TaoSequence.sql`, `sql/03TaoBang.sql`, `sql/04TaoRangBuoc.sql`, `sql/05TaoTrigger.sql`, `sql/06TaoStoredFunction.sql` và `sql/07TaoStoredProcedure.sql` tạo schema theo mô hình quan hệ trong tài liệu HQTCSDL:
 
 - `TaiKhoan`
 - `NhanVien`
@@ -155,6 +155,9 @@ Stored function:
 - `SF_TinhDiemTrungBinhGame`
 - `SF_TinhDoanhThuNPT`
 - `SF_TongChiTieuNguoiChoi`
+
+
+
 
 
 

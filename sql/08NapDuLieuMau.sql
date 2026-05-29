@@ -56,15 +56,15 @@ INSERT INTO DanhMucTheLoai (MaTheLoai, MaGame) VALUES (3, 4);
 INSERT INTO DanhMucTheLoai (MaTheLoai, MaGame) VALUES (5, 3);
 INSERT INTO DanhMucTheLoai (MaTheLoai, MaGame) VALUES (4, 3);
 
-INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (1, 1, 'Ảnh bìa', 'anh_bia_game/neon-runner-cover.jpg');
-INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (2, 2, 'Ảnh bìa', 'anh_bia_game/lotus-quest-cover.jpg');
-INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (3, 3, 'Ảnh bìa', 'anh_bia_game/server-tycoon-cover.jpg');
-INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (17, 4, 'Ảnh bìa', 'anh_bia_game/mythic-frontier-cover.jpg');
+INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (1, 1, 'Ảnh bìa', 'anhBiaGame/neonRunnerCover.jpg');
+INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (2, 2, 'Ảnh bìa', 'anhBiaGame/lotusQuestCover.jpg');
+INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (3, 3, 'Ảnh bìa', 'anhBiaGame/serverTycoonCover.jpg');
+INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (17, 4, 'Ảnh bìa', 'anhBiaGame/mythicFrontierCover.jpg');
 
 INSERT INTO PhienBanGame (MaPhienBan, MaGame, TenPhienBan, NoiDungPhienBan, FilePhienBan, DungLuong, NgayTao, TrangThai)
-VALUES (1, 1, '1.0.0', 'Bản phát hành đầu tiên.', 'tep_build/neon-runner-1.0.zip', 2200, DATE '2026-02-25', 'Đang phát hành');
+VALUES (1, 1, '1.0.0', 'Bản phát hành đầu tiên.', 'tepBuild/neonRunner1.0.zip', 2200, DATE '2026-02-25', 'Đang phát hành');
 INSERT INTO PhienBanGame (MaPhienBan, MaGame, TenPhienBan, NoiDungPhienBan, FilePhienBan, DungLuong, NgayTao, TrangThai)
-VALUES (2, 4, '0.9.0', 'Bản đề xuất phát hành.', 'tep_build/mythic-frontier-0.9.zip', 3600, DATE '2026-05-20', 'Chưa phát hành');
+VALUES (2, 4, '0.9.0', 'Bản đề xuất phát hành.', 'tepBuild/mythicFrontier0.9.zip', 3600, DATE '2026-05-20', 'Chưa phát hành');
 
 INSERT INTO YeuCauPhatHanh (MaYeuCau, MaNPT, MaGame, MaPhienBan, NgayYeuCau, TrangThai)
 VALUES (1, 1, 4, 2, DATE '2026-05-21', 'Chờ duyệt');
@@ -137,24 +137,24 @@ INSERT INTO DanhMucTheLoai (MaTheLoai, MaGame) VALUES (2, 8);
 INSERT INTO DanhMucTheLoai (MaTheLoai, MaGame) VALUES (4, 9);
 INSERT INTO DanhMucTheLoai (MaTheLoai, MaGame) VALUES (1, 10);
 
-INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (4, 5, 'Ảnh bìa', 'anh_bia_game/cyber-kitchen-cover.jpg');
-INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (5, 6, 'Ảnh bìa', 'anh_bia_game/shadow-valley-cover.jpg');
-INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (6, 7, 'Ảnh bìa', 'anh_bia_game/pixel-striker-cover.jpg');
-INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (7, 8, 'Ảnh bìa', 'anh_bia_game/echoes-of-rain-cover.jpg');
-INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (8, 9, 'Ảnh bìa', 'anh_bia_game/mecha-garden-cover.jpg');
-INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (9, 10, 'Ảnh bìa', 'anh_bia_game/trash-clicker-cover.jpg');
-INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (10, 6, 'Video', 'tep_media/tai_len/shadow-valley-trailer.mp4');
+INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (4, 5, 'Ảnh bìa', 'anhBiaGame/cyberKitchenCover.jpg');
+INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (5, 6, 'Ảnh bìa', 'anhBiaGame/shadowValleyCover.jpg');
+INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (6, 7, 'Ảnh bìa', 'anhBiaGame/pixelStrikerCover.jpg');
+INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (7, 8, 'Ảnh bìa', 'anhBiaGame/echoesOfRainCover.jpg');
+INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (8, 9, 'Ảnh bìa', 'anhBiaGame/mechaGardenCover.jpg');
+INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (9, 10, 'Ảnh bìa', 'anhBiaGame/trashClickerCover.jpg');
+INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (10, 6, 'Video', 'tepMedia/taiLen/shadowValleyTrailer.mp4');
 
 INSERT INTO PhienBanGame (MaPhienBan, MaGame, TenPhienBan, NoiDungPhienBan, FilePhienBan, DungLuong, NgayTao, TrangThai)
-VALUES (3, 5, '1.0.0', 'Bản phát hành Cyber Kitchen.', 'tep_build/cyber-kitchen-1.0.zip', 1300, DATE '2026-05-14', 'Đang phát hành');
+VALUES (3, 5, '1.0.0', 'Bản phát hành Cyber Kitchen.', 'tepBuild/cyberKitchen1.0.zip', 1300, DATE '2026-05-14', 'Đang phát hành');
 INSERT INTO PhienBanGame (MaPhienBan, MaGame, TenPhienBan, NoiDungPhienBan, FilePhienBan, DungLuong, NgayTao, TrangThai)
-VALUES (4, 6, '1.0.0', 'Bản phát hành Shadow Valley.', 'tep_build/shadow-valley-1.0.zip', 4100, DATE '2026-04-18', 'Đang phát hành');
+VALUES (4, 6, '1.0.0', 'Bản phát hành Shadow Valley.', 'tepBuild/shadowValley1.0.zip', 4100, DATE '2026-04-18', 'Đang phát hành');
 INSERT INTO PhienBanGame (MaPhienBan, MaGame, TenPhienBan, NoiDungPhienBan, FilePhienBan, DungLuong, NgayTao, TrangThai)
-VALUES (5, 7, '1.0.0', 'Bản phát hành Pixel Striker.', 'tep_build/pixel-striker-1.0.zip', 900, DATE '2026-05-06', 'Đang phát hành');
+VALUES (5, 7, '1.0.0', 'Bản phát hành Pixel Striker.', 'tepBuild/pixelStriker1.0.zip', 900, DATE '2026-05-06', 'Đang phát hành');
 INSERT INTO PhienBanGame (MaPhienBan, MaGame, TenPhienBan, NoiDungPhienBan, FilePhienBan, DungLuong, NgayTao, TrangThai)
-VALUES (6, 8, '0.8.0', 'Bản đầu tiên gửi kiểm duyệt.', 'tep_build/echoes-of-rain-0.8.zip', 2800, DATE '2026-05-22', 'Chưa phát hành');
+VALUES (6, 8, '0.8.0', 'Bản đầu tiên gửi kiểm duyệt.', 'tepBuild/echoesOfRain0.8.zip', 2800, DATE '2026-05-22', 'Chưa phát hành');
 INSERT INTO PhienBanGame (MaPhienBan, MaGame, TenPhienBan, NoiDungPhienBan, FilePhienBan, DungLuong, NgayTao, TrangThai)
-VALUES (7, 9, '1.0.0', 'Bản phát hành Mecha Garden.', 'tep_build/mecha-garden-1.0.zip', 1600, DATE '2026-02-10', 'Đang phát hành');
+VALUES (7, 9, '1.0.0', 'Bản phát hành Mecha Garden.', 'tepBuild/mechaGarden1.0.zip', 1600, DATE '2026-02-10', 'Đang phát hành');
 
 INSERT INTO YeuCauPhatHanh (MaYeuCau, MaNPT, MaGame, MaPhienBan, NgayYeuCau, TrangThai)
 VALUES (3, 2, 8, 6, DATE '2026-05-23', 'Chờ duyệt');
@@ -249,25 +249,25 @@ INSERT INTO DanhMucTheLoai (MaTheLoai, MaGame) VALUES (3, 15);
 INSERT INTO DanhMucTheLoai (MaTheLoai, MaGame) VALUES (8, 15);
 INSERT INTO DanhMucTheLoai (MaTheLoai, MaGame) VALUES (5, 16);
 
-INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (11, 11, 'Ảnh bìa', 'anh_bia_game/sky-rail-cover.jpg');
-INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (12, 12, 'Ảnh bìa', 'anh_bia_game/dragon-market-cover.jpg');
-INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (13, 13, 'Ảnh bìa', 'anh_bia_game/silent-campus-cover.jpg');
-INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (14, 14, 'Ảnh bìa', 'anh_bia_game/ocean-farm-cover.jpg');
-INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (15, 15, 'Ảnh bìa', 'anh_bia_game/byte-dungeon-cover.jpg');
-INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (16, 16, 'Ảnh bìa', 'anh_bia_game/city-bus-pro-cover.jpg');
+INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (11, 11, 'Ảnh bìa', 'anhBiaGame/skyRailCover.jpg');
+INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (12, 12, 'Ảnh bìa', 'anhBiaGame/dragonMarketCover.jpg');
+INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (13, 13, 'Ảnh bìa', 'anhBiaGame/silentCampusCover.jpg');
+INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (14, 14, 'Ảnh bìa', 'anhBiaGame/oceanFarmCover.jpg');
+INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (15, 15, 'Ảnh bìa', 'anhBiaGame/byteDungeonCover.jpg');
+INSERT INTO GameMedia (MaMedia, MaGame, LoaiMedia, FileMedia) VALUES (16, 16, 'Ảnh bìa', 'anhBiaGame/cityBusProCover.jpg');
 
 INSERT INTO PhienBanGame (MaPhienBan, MaGame, TenPhienBan, NoiDungPhienBan, FilePhienBan, DungLuong, NgayTao, TrangThai)
-VALUES (8, 11, '1.0.0', 'Bản phát hành Sky Rail.', 'tep_build/sky-rail-1.0.zip', 1100, DATE '2026-05-08', 'Đang phát hành');
+VALUES (8, 11, '1.0.0', 'Bản phát hành Sky Rail.', 'tepBuild/skyRail1.0.zip', 1100, DATE '2026-05-08', 'Đang phát hành');
 INSERT INTO PhienBanGame (MaPhienBan, MaGame, TenPhienBan, NoiDungPhienBan, FilePhienBan, DungLuong, NgayTao, TrangThai)
-VALUES (9, 12, '1.0.0', 'Bản phát hành Dragon Market.', 'tep_build/dragon-market-1.0.zip', 1500, DATE '2026-05-14', 'Đang phát hành');
+VALUES (9, 12, '1.0.0', 'Bản phát hành Dragon Market.', 'tepBuild/dragonMarket1.0.zip', 1500, DATE '2026-05-14', 'Đang phát hành');
 INSERT INTO PhienBanGame (MaPhienBan, MaGame, TenPhienBan, NoiDungPhienBan, FilePhienBan, DungLuong, NgayTao, TrangThai)
-VALUES (10, 13, '1.0.0', 'Bản phát hành Silent Campus.', 'tep_build/silent-campus-1.0.zip', 3300, DATE '2026-05-17', 'Đang phát hành');
+VALUES (10, 13, '1.0.0', 'Bản phát hành Silent Campus.', 'tepBuild/silentCampus1.0.zip', 3300, DATE '2026-05-17', 'Đang phát hành');
 INSERT INTO PhienBanGame (MaPhienBan, MaGame, TenPhienBan, NoiDungPhienBan, FilePhienBan, DungLuong, NgayTao, TrangThai)
-VALUES (11, 14, '0.9.0', 'Bản gửi kiểm duyệt Ocean Farm.', 'tep_build/ocean-farm-0.9.zip', 780, DATE '2026-05-24', 'Chưa phát hành');
+VALUES (11, 14, '0.9.0', 'Bản gửi kiểm duyệt Ocean Farm.', 'tepBuild/oceanFarm0.9.zip', 780, DATE '2026-05-24', 'Chưa phát hành');
 INSERT INTO PhienBanGame (MaPhienBan, MaGame, TenPhienBan, NoiDungPhienBan, FilePhienBan, DungLuong, NgayTao, TrangThai)
-VALUES (12, 15, '1.0.0', 'Bản phát hành Byte Dungeon.', 'tep_build/byte-dungeon-1.0.zip', 2400, DATE '2026-04-25', 'Đang phát hành');
+VALUES (12, 15, '1.0.0', 'Bản phát hành Byte Dungeon.', 'tepBuild/byteDungeon1.0.zip', 2400, DATE '2026-04-25', 'Đang phát hành');
 INSERT INTO PhienBanGame (MaPhienBan, MaGame, TenPhienBan, NoiDungPhienBan, FilePhienBan, DungLuong, NgayTao, TrangThai)
-VALUES (13, 16, '1.0.0', 'Bản đã bị gỡ khỏi nền tảng.', 'tep_build/city-bus-pro-1.0.zip', 600, DATE '2026-01-10', 'Chưa phát hành');
+VALUES (13, 16, '1.0.0', 'Bản đã bị gỡ khỏi nền tảng.', 'tepBuild/cityBusPro1.0.zip', 600, DATE '2026-01-10', 'Chưa phát hành');
 
 INSERT INTO YeuCauPhatHanh (MaYeuCau, MaNPT, MaGame, MaPhienBan, NgayYeuCau, TrangThai)
 VALUES (5, 1, 14, 11, DATE '2026-05-25', 'Chờ duyệt');
@@ -316,4 +316,6 @@ VALUES (5, 'Hoàn tiền', 'Tôi muốn hỏi chính sách hoàn tiền cho game
 INSERT INTO Ticket (MaTicket, LoaiYeuCau, NoiDung, MaNguoiChoi, MaGame, MaGD, NgayTao, TrangThai, MaNVXuLy)
 VALUES (6, 'Lỗi tải game', 'Không tải được bản build của Dragon Market.', 6, 12, 6, SYSDATE, 'Đang xử lý', 4);
 COMMIT;
+
+
 
