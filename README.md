@@ -7,53 +7,28 @@ Arcadia là ứng dụng desktop mô phỏng một nền tảng phân phối gam
 | Phần | Vị trí | Nội dung |
 |---|---|---|
 | Source code chương trình | `src/main/java/com/gameplatform` | Code JavaFX, controller nghiệp vụ, model, service, kết nối database |
-| Tài nguyên giao diện | `src/main/resources` | CSS và file cấu hình database mẫu |
 | Database | `sql` | Script tạo user, bảng, ràng buộc, trigger, stored function, stored procedure và dữ liệu mẫu |
-| Ảnh/file demo | `anhBiaGame`, `tepBuild`, `tepMedia` | Ảnh bìa game, thư mục build/media phục vụ demo |
-| Script hỗ trợ | `scripts` | Script chạy app và hướng dẫn setup database |
+| Tài nguyên giao diện | `src/main/resources`, `anhBiaGame` | CSS, ảnh bìa game và cấu hình database |
+| Script hỗ trợ | `scripts` | Script setup database và chạy app |
 
-## 2. Công Nghệ Và Thư Viện
+## 2. Công Nghệ, Thư Viện Và Yêu Cầu Cài Đặt
 
-| Thành phần | Sử dụng |
-|---|---|
-| Ngôn ngữ | Java 21 |
-| Giao diện | JavaFX 21.0.2 |
-| Database | Oracle Database 21c |
-| JDBC driver | `ojdbc11` 23.3.0.23.09 |
-| Build tool | Maven |
+| Thành phần | Sử dụng | Link cài đặt |
+|---|---|---|
+| JDK | Java 21 | [Oracle JDK](https://www.oracle.com/java/technologies/downloads/#java21) |
+| Build tool | Maven | [Apache Maven](https://maven.apache.org/download.cgi) |
+| Database | Oracle Database 21c XE | [Oracle Database XE](https://www.oracle.com/database/technologies/xe-downloads.html) |
+| Giao diện | JavaFX 21.0.2 | Đã khai báo trong `pom.xml` |
+| JDBC driver | `ojdbc11` 23.3.0.23.09 | Đã khai báo trong `pom.xml` |
 
-Các thư viện JavaFX và Oracle JDBC đã được khai báo trong `pom.xml`. Khi chạy bằng Maven, project sẽ tự tải thư viện cần thiết.
+JavaFX và Oracle JDBC đã nằm trong `pom.xml`, nên khi chạy bằng Maven project sẽ tự tải thư viện cần thiết. Không cần tải riêng file `.jar`.
 
-## 3. Yêu Cầu Cài Đặt
+## 3. Cấu Hình Database
 
-Cần cài đặt:
-
-1. JDK 21.
-2. Maven.
-3. Oracle Database 21c.
-4. SQL*Plus hoặc Oracle SQL Developer.
-
-Kiểm tra Java và Maven:
-
-```powershell
-java -version
-mvn -version
-```
-
-Lưu ý: nếu VSCode báo lỗi `No suitable driver`, thường là do bấm Run Java trực tiếp khiến Oracle JDBC không nằm trong classpath. Hãy chạy app bằng Maven theo mục 8.
-
-## 4. Cấu Hình Database Cho App
-
-Ứng dụng đọc cấu hình kết nối từ file:
+App đọc thông tin kết nối trong file đã có sẵn:
 
 ```text
 src/main/resources/db.properties
-```
-
-Sau khi clone project, tạo file này từ file mẫu:
-
-```powershell
-Copy-Item src\main\resources\db.properties.example src\main\resources\db.properties
 ```
 
 Nội dung mặc định:
@@ -64,162 +39,55 @@ db.username=GAME_PLATFORM
 db.password=game123
 ```
 
-Project mặc định dùng service/PDB là `orclpdb`. Nếu Oracle trên máy dùng tên khác như `ORCLPDB1` hoặc `XEPDB1`, sửa dòng `db.url` cho đúng:
+Nếu Oracle trên máy dùng service/PDB khác, ví dụ `ORCLPDB1` hoặc `XEPDB1`, chỉ cần sửa dòng `db.url`:
 
 ```properties
 db.url=jdbc:oracle:thin:@localhost:1521/ORCLPDB1
 ```
 
-## 5. Mở Database Oracle
+## 4. Cài Database Và Chạy Chương Trình
 
-Nếu app báo lỗi database chưa mở, mở PDB trước bằng SQL*Plus:
+Sau khi cài JDK, Maven và Oracle Database, mở PowerShell tại thư mục gốc project.
 
-```powershell
-sqlplus / as sysdba
-```
-
-Trong SQL*Plus, chạy:
-
-```sql
-ALTER PLUGGABLE DATABASE ORCLPDB OPEN;
-ALTER PLUGGABLE DATABASE ORCLPDB SAVE STATE;
-EXIT;
-```
-
-Nếu máy dùng PDB khác `ORCLPDB`, thay tên PDB trong lệnh trên bằng tên PDB trên máy.
-
-Có thể kiểm tra PDB/service bằng:
-
-```sql
-SHOW PDBS;
-SELECT name FROM v$services;
-```
-
-## 6. Tạo Database Cho Project
-
-Sau khi Oracle đã mở, tại thư mục gốc project chạy:
+Cài database:
 
 ```powershell
-sqlplus / as sysdba @sql/99CaiDatDayDu.sql
+.\scripts\setupDatabase.ps1
 ```
 
-File `99CaiDatDayDu.sql` tự động thực hiện toàn bộ setup:
+Script này tự chạy file `sql/99CaiDatDayDu.sql`, mở PDB `ORCLPDB`, tạo user `GAME_PLATFORM`, tạo toàn bộ bảng, trigger, stored function, stored procedure và nạp dữ liệu mẫu.
 
-1. Mở PDB `ORCLPDB`.
-2. Tạo user `GAME_PLATFORM` với password `game123`.
-3. Xóa schema cũ nếu có.
-4. Tạo sequence.
-5. Tạo bảng.
-6. Tạo ràng buộc khóa chính, khóa ngoại, unique, check.
-7. Tạo trigger.
-8. Tạo stored function.
-9. Tạo stored procedure.
-10. Nạp dữ liệu mẫu.
-
-Nếu không dùng SQL*Plus, có thể mở Oracle SQL Developer bằng user `SYS` hoặc `SYSTEM`, sau đó chạy file:
-
-```text
-sql/99CaiDatDayDu.sql
-```
-
-Nên chạy bằng **Run Script (F5)**, không chạy từng dòng.
-
-## 7. Kiểm Tra Database
-
-Đăng nhập SQL Developer bằng:
-
-```text
-Username: GAME_PLATFORM
-Password: game123
-Service : orclpdb
-```
-
-Chạy thử:
-
-```sql
-SELECT * FROM TaiKhoan;
-SELECT * FROM Game;
-SELECT * FROM YeuCauPhatHanh;
-```
-
-Nếu có dữ liệu trả về thì database đã sẵn sàng.
-
-## 8. Chạy Chương Trình
-
-Tại thư mục gốc project, chạy:
+Nếu Oracle trên máy dùng PDB khác, ví dụ `XEPDB1`, chạy:
 
 ```powershell
-mvn clean javafx:run
+.\scripts\setupDatabase.ps1 -PdbName XEPDB1
 ```
 
-Hoặc trên Windows:
+Sau đó sửa `db.url` trong `src/main/resources/db.properties` thành:
+
+```properties
+db.url=jdbc:oracle:thin:@localhost:1521/XEPDB1
+```
+
+Chạy app:
 
 ```powershell
 .\scripts\runApp.ps1
 ```
 
-Không nên bấm Run trực tiếp một file `.java` trong VSCode nếu chưa cấu hình Maven, vì dễ gặp lỗi thiếu Oracle JDBC driver.
+Hoặc chạy trực tiếp bằng Maven:
 
-## 9. Tài Khoản Demo
-
-Tất cả tài khoản demo có mật khẩu:
-
-```text
-123456
+```powershell
+mvn clean javafx:run
 ```
 
-| Vai trò | Tài khoản |
-|---|---|
-| Người chơi | `player01` |
-| Nhà phát triển | `dev01` |
-| Quản lý nền tảng | `manager01` |
-| Kiểm duyệt viên | `moderator01` |
-| Marketing | `marketing01` |
-| CSKH | `cskh01` |
+Không nên bấm Run trực tiếp một file `.java` trong VSCode, vì dễ gặp lỗi thiếu Oracle JDBC driver.
 
-## 10. Chức Năng Chính
-
-| Vai trò | Chức năng |
-|---|---|
-| Người chơi | Xem cửa hàng, tìm kiếm game, wishlist, giỏ hàng, thanh toán, thư viện game, ticket hỗ trợ |
-| Nhà phát triển | Đăng tải game, quản lý game, phiên bản, media, gửi yêu cầu phát hành, xem doanh thu |
-| Kiểm duyệt viên | Duyệt/từ chối yêu cầu phát hành, quản lý thể loại game |
-| Marketing | Quản lý chương trình khuyến mãi và mã giảm giá |
-| CSKH | Xem, nhận xử lý, phản hồi và đóng ticket |
-| Quản lý nền tảng | Quản lý nhân viên, tài khoản, xem và xuất báo cáo doanh thu |
-
-## 11. Các File SQL Chính
-
-| File | Mục đích |
-|---|---|
-| `00TaoUserGamePlatform.sql` | Tạo user/schema `GAME_PLATFORM` |
-| `01XoaSchemaCu.sql` | Xóa object cũ để setup lại sạch |
-| `02TaoSequence.sql` | Tạo sequence sinh mã tự động |
-| `03TaoBang.sql` | Tạo các bảng chính |
-| `04TaoRangBuoc.sql` | Tạo khóa chính, khóa ngoại, unique, check, index |
-| `05TaoTrigger.sql` | Tạo trigger xử lý nghiệp vụ tự động |
-| `06TaoStoredFunction.sql` | Tạo stored function |
-| `07TaoStoredProcedure.sql` | Tạo stored procedure |
-| `08NapDuLieuMau.sql` | Nạp dữ liệu mẫu |
-| `99CaiDatDayDu.sql` | Script tổng để cài đặt database |
-
-## 12. Database Object Nổi Bật
-
-| Loại | Object | Vai trò |
-|---|---|---|
-| Trigger | `TRG_XuLyKhiGiaoDichThanhCong` | Sau khi giao dịch thành công, tự động thêm game vào thư viện, tăng lượt mua, xóa giỏ hàng và cập nhật mã giảm giá |
-| Trigger | `TRG_XuLyDuyetYCPH` | Khi yêu cầu phát hành được duyệt, cập nhật game/phiên bản sang trạng thái đang phát hành |
-| Stored Procedure | `SP_XuLyYeuCauPhatHanh` | Duyệt hoặc từ chối yêu cầu phát hành, có khóa dòng bằng `FOR UPDATE` |
-| Stored Procedure | `SP_TaoGiaoDichTuGioHang` | Tạo giao dịch từ giỏ hàng |
-| Stored Procedure | `SP_XacNhanThanhToan` | Xác nhận thanh toán |
-| Stored Function | `SF_KiemTraMaGiamGia` | Kiểm tra mã giảm giá có hợp lệ không |
-| Stored Function | `SF_TinhGiaHienTai` | Tính giá game sau khuyến mãi |
-
-## 13. Lỗi Thường Gặp
+## 5. Lỗi Thường Gặp Khi Cài Đặt
 
 ### `No suitable driver`
 
-Nguyên nhân: chạy app không thông qua Maven nên thiếu `ojdbc11`.
+Nguyên nhân thường gặp là chạy app không thông qua Maven nên thiếu `ojdbc11`.
 
 Cách xử lý:
 
@@ -235,47 +103,78 @@ mvn -U clean javafx:run
 
 ### `database not open` hoặc không kết nối được Oracle
 
-Mở PDB:
+Cách nhanh nhất là chạy lại script setup:
 
 ```powershell
-sqlplus / as sysdba
+.\scripts\setupDatabase.ps1
 ```
 
-```sql
-ALTER PLUGGABLE DATABASE ORCLPDB OPEN;
-ALTER PLUGGABLE DATABASE ORCLPDB SAVE STATE;
-EXIT;
-```
-
-Sau đó chạy lại:
-
-```powershell
-sqlplus / as sysdba @sql/99CaiDatDayDu.sql
-mvn clean javafx:run
-```
+Nếu vẫn lỗi, kiểm tra Oracle service đã chạy chưa. Trên Windows có thể mở `Services` và bật các service Oracle, sau đó chạy lại script.
 
 ### Đăng nhập app không được
 
 Kiểm tra:
 
-1. Đã chạy `sql/99CaiDatDayDu.sql` chưa.
+1. Đã chạy `.\scripts\setupDatabase.ps1` chưa.
 2. File `src/main/resources/db.properties` có đúng user/password không.
-3. `db.url` có đúng service name Oracle trên máy không.
+3. `db.url` có đúng service/PDB Oracle trên máy không.
 
-Test nhanh:
+Tài khoản database mặc định:
 
-```sql
-SELECT TenDangNhap, LoaiTaiKhoan, TrangThai
-FROM TaiKhoan;
+```text
+Username: GAME_PLATFORM
+Password: game123
 ```
 
-## 14. Thành Viên
+## 6. Tổng Quan Demo Và Thành Phần Hệ Thống
 
-- Nguyễn Xuân Bình
-- Lê Nguyễn Hữu Hiếu
-- Phạm Công Định
-- Nguyễn Thị Quỳnh Hân
+### Tài khoản demo
 
-## 15. Ghi Chú
+Tất cả tài khoản demo có mật khẩu `123456`.
 
-Project được xây dựng phục vụ mục đích học tập và báo cáo đồ án.
+| Vai trò | Tài khoản |
+|---|---|
+| Người chơi | `player01` |
+| Nhà phát triển | `dev01` |
+| Quản lý nền tảng | `manager01` |
+| Kiểm duyệt viên | `moderator01` |
+| Marketing | `marketing01` |
+| CSKH | `cskh01` |
+
+### Chức năng chính
+
+| Vai trò | Chức năng |
+|---|---|
+| Người chơi | Xem cửa hàng, tìm kiếm game, wishlist, giỏ hàng, thanh toán, thư viện game, ticket hỗ trợ |
+| Nhà phát triển | Đăng tải game, quản lý game, phiên bản, media, gửi yêu cầu phát hành, xem doanh thu |
+| Kiểm duyệt viên | Duyệt/từ chối yêu cầu phát hành, quản lý thể loại game |
+| Marketing | Quản lý chương trình khuyến mãi và mã giảm giá |
+| CSKH | Xem, nhận xử lý, phản hồi và đóng ticket |
+| Quản lý nền tảng | Quản lý nhân viên, tài khoản, xem và xuất báo cáo doanh thu |
+
+### Các file SQL chính
+
+| File | Mục đích |
+|---|---|
+| `00TaoUserGamePlatform.sql` | Tạo user/schema `GAME_PLATFORM` |
+| `01XoaSchemaCu.sql` | Xóa object cũ để setup lại sạch |
+| `02TaoSequence.sql` | Tạo sequence sinh mã tự động |
+| `03TaoBang.sql` | Tạo các bảng chính |
+| `04TaoRangBuoc.sql` | Tạo khóa chính, khóa ngoại, unique, check, index |
+| `05TaoTrigger.sql` | Tạo trigger xử lý nghiệp vụ tự động |
+| `06TaoStoredFunction.sql` | Tạo stored function |
+| `07TaoStoredProcedure.sql` | Tạo stored procedure |
+| `08NapDuLieuMau.sql` | Nạp dữ liệu mẫu |
+| `99CaiDatDayDu.sql` | Script tổng để cài đặt database |
+
+### Database object nổi bật
+
+| Loại | Object | Vai trò |
+|---|---|---|
+| Trigger | `TRG_XuLyKhiGiaoDichThanhCong` | Sau khi giao dịch thành công, tự động thêm game vào thư viện, tăng lượt mua, xóa giỏ hàng và cập nhật mã giảm giá |
+| Trigger | `TRG_XuLyDuyetYCPH` | Khi yêu cầu phát hành được duyệt, cập nhật game/phiên bản sang trạng thái đang phát hành |
+| Stored Procedure | `SP_XuLyYeuCauPhatHanh` | Duyệt hoặc từ chối yêu cầu phát hành, có khóa dòng bằng `FOR UPDATE` |
+| Stored Procedure | `SP_TaoGiaoDichTuGioHang` | Tạo giao dịch từ giỏ hàng |
+| Stored Procedure | `SP_XacNhanThanhToan` | Xác nhận thanh toán |
+| Stored Function | `SF_KiemTraMaGiamGia` | Kiểm tra mã giảm giá có hợp lệ không |
+| Stored Function | `SF_TinhGiaHienTai` | Tính giá game sau khuyến mãi |

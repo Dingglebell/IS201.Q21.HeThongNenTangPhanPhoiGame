@@ -1,24 +1,37 @@
+param(
+    [string]$PdbName = "ORCLPDB"
+)
+
 $ErrorActionPreference = "Stop"
 
 $projectRoot = Split-Path -Parent $PSScriptRoot
+$setupScript = Join-Path $projectRoot "sql\99CaiDatDayDu.sql"
+$generatedScript = Join-Path $projectRoot ".setupDatabaseGenerated.sql"
+
 Set-Location $projectRoot
 $env:NLS_LANG = ".AL32UTF8"
 
-Write-Host "Chạy script tạo user bằng SYS/SYSTEM nếu cần:"
-Write-Host "  `$env:NLS_LANG='.AL32UTF8'; sqlplus / as sysdba @sql/99CaiDatDayDu.sql"
-Write-Host ""
-Write-Host "Hoặc chạy thủ công từng bước:"
-Write-Host "  sqlplus / as sysdba @sql/00TaoUserGamePlatform.sql"
-Write-Host "  sqlplus GAME_PLATFORM/game123@//localhost:1521/orclpdb @sql/01XoaSchemaCu.sql"
-Write-Host "  sqlplus GAME_PLATFORM/game123@//localhost:1521/orclpdb @sql/02TaoSequence.sql"
-Write-Host "  sqlplus GAME_PLATFORM/game123@//localhost:1521/orclpdb @sql/03TaoBang.sql"
-Write-Host "  sqlplus GAME_PLATFORM/game123@//localhost:1521/orclpdb @sql/04TaoRangBuoc.sql"
-Write-Host "  sqlplus GAME_PLATFORM/game123@//localhost:1521/orclpdb @sql/05TaoTrigger.sql"
-Write-Host "  sqlplus GAME_PLATFORM/game123@//localhost:1521/orclpdb @sql/06TaoStoredFunction.sql"
-Write-Host "  sqlplus GAME_PLATFORM/game123@//localhost:1521/orclpdb @sql/07TaoStoredProcedure.sql"
-Write-Host "  sqlplus GAME_PLATFORM/game123@//localhost:1521/orclpdb @sql/08NapDuLieuMau.sql"
-Write-Host ""
-Write-Host "Nếu SQL*Plus gặp ORA-12638 khi dùng TCP, mở SQL Developer hoặc VSCode Oracle extension và chạy trực tiếp các file trong thư mục sql."
+$sqlplus = Get-Command "sqlplus" -ErrorAction SilentlyContinue
+if (-not $sqlplus) {
+    throw "Không tìm thấy SQL*Plus. Hãy cài Oracle Database/Oracle Client và thêm sqlplus vào PATH."
+}
 
+Write-Host "Đang cài đặt database GAME_PLATFORM..."
+$pdbUpper = $PdbName.ToUpperInvariant()
+$pdbLower = $PdbName.ToLowerInvariant()
 
+$scriptContent = Get-Content -Raw -Path $setupScript
+$scriptContent = $scriptContent.Replace("ORCLPDB", $pdbUpper).Replace("orclpdb", $pdbLower)
+Set-Content -Path $generatedScript -Value $scriptContent -Encoding UTF8
 
+try {
+    & $sqlplus.Source -L "/ as sysdba" "@$generatedScript"
+} finally {
+    Remove-Item -LiteralPath $generatedScript -Force -ErrorAction SilentlyContinue
+}
+
+if ($LASTEXITCODE -ne 0) {
+    throw "Setup database thất bại. Kiểm tra Oracle service, SQL*Plus và quyền SYSDBA."
+}
+
+Write-Host "Hoàn tất setup database."

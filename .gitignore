@@ -1,6 +1,5 @@
 target/
 .venv/
-src/main/resources/db.properties
 
 baoCao/*
 !baoCao/.gitkeep
