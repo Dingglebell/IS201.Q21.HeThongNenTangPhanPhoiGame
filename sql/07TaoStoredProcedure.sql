@@ -247,8 +247,17 @@ CREATE OR REPLACE PROCEDURE SP_ThemGameVaoKhuyenMai(
 )
 IS
 BEGIN
-    INSERT INTO ChiTietKhuyenMai (MaKM, MaGame, PhanTramKM)
-    VALUES (pMaKM, pMaGame, pPhanTramKM);
+    MERGE INTO ChiTietKhuyenMai target
+    USING (
+        SELECT pMaKM AS MaKM, pMaGame AS MaGame, pPhanTramKM AS PhanTramKM
+        FROM dual
+    ) source
+    ON (target.MaKM = source.MaKM AND target.MaGame = source.MaGame)
+    WHEN MATCHED THEN
+        UPDATE SET target.PhanTramKM = source.PhanTramKM
+    WHEN NOT MATCHED THEN
+        INSERT (MaKM, MaGame, PhanTramKM)
+        VALUES (source.MaKM, source.MaGame, source.PhanTramKM);
 END;
 /
 

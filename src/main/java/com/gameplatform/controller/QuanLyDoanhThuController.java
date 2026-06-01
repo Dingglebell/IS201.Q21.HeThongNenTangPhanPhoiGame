@@ -46,6 +46,14 @@ public final class QuanLyDoanhThuController {
         Path directory = Path.of("baoCao");
         Files.createDirectories(directory);
         Path file = directory.resolve(filePrefix + System.currentTimeMillis() + ".csv");
+        return xuatCsv(file, rows);
+    }
+
+    public Path xuatCsv(Path file, List<DongBaoCaoDoanhThu> rows) throws IOException {
+        Path parent = file.toAbsolutePath().getParent();
+        if (parent != null) {
+            Files.createDirectories(parent);
+        }
         StringBuilder builder = new StringBuilder();
         builder.append('\uFEFF');
         builder.append("MaGame,TenGame,NhaPhatTrien,SoLuongBan,DoanhThuGoc,DoanhThuNPT,DoanhThuNenTang\n");

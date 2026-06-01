@@ -79,6 +79,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public final class MainView extends BorderPane {
     private final TaiKhoanDangNhap session;
@@ -2249,29 +2250,6 @@ public final class MainView extends BorderPane {
         promotionStatus.getSelectionModel().selectFirst();
         Button create = UiUtils.primaryButton("Tạo khuyến mãi");
         Button capNhatChuongTrinh = UiUtils.secondaryButton("Cập nhật khuyến mãi");
-        create.setOnAction(event -> {
-            try {
-                int id = quanLyKhuyenMaiController.taoChuongTrinh(name.getText(), start.getValue(), end.getValue(), contentText.getText());
-                UiUtils.showInfo("Đã tạo khuyến mãi", "Chương trình #" + id + " đã được tạo.");
-                table.getItems().setAll(quanLyKhuyenMaiController.traCuuChuongTrinh());
-            } catch (SQLException exception) {
-                UiUtils.showError("Không tạo được khuyến mãi", exception);
-            }
-        });
-        capNhatChuongTrinh.setOnAction(event -> {
-            ChuongTrinhKhuyenMai selected = table.getSelectionModel().getSelectedItem();
-            if (selected == null) {
-                UiUtils.showInfo("Chọn khuyến mãi", "Vui lòng chọn chương trình cần cập nhật.");
-                return;
-            }
-            try {
-                quanLyKhuyenMaiController.capNhatChuongTrinh(selected.promotionId(), name.getText(), start.getValue(), end.getValue(),
-                        promotionStatus.getValue(), contentText.getText());
-                table.getItems().setAll(quanLyKhuyenMaiController.traCuuChuongTrinh());
-            } catch (SQLException exception) {
-                UiUtils.showError("Không cập nhật được khuyến mãi", exception);
-            }
-        });
 
         ComboBox<ChuongTrinhKhuyenMai> promotionBox = new ComboBox<>();
         promotionBox.setPromptText("Chọn chương trình khuyến mãi");
@@ -2300,7 +2278,6 @@ public final class MainView extends BorderPane {
             }
         });
         try {
-            promotionBox.getItems().setAll(quanLyKhuyenMaiController.traCuuChuongTrinh());
             gameBox.getItems().setAll(quanLyThongTinGameController.findReleasedGames());
         } catch (SQLException exception) {
             content.getChildren().add(errorCard("Không tải được danh sách chọn khuyến mãi/game", exception));
@@ -2313,6 +2290,27 @@ public final class MainView extends BorderPane {
                 UiUtils.stringColumn("Game", 200, GameTrongKhuyenMai::gameTitle),
                 UiUtils.stringColumn("% giảm", 90, item -> item.discountPercent().toPlainString())
         );
+        Consumer<Integer> refreshPromotions = selectedPromotionId -> {
+            try {
+                List<ChuongTrinhKhuyenMai> promotions = quanLyKhuyenMaiController.traCuuChuongTrinh();
+                table.getItems().setAll(promotions);
+                promotionBox.getItems().setAll(promotions);
+                if (selectedPromotionId == null) {
+                    detailTable.getItems().clear();
+                    return;
+                }
+                promotions.stream()
+                        .filter(promotion -> promotion.promotionId() == selectedPromotionId)
+                        .findFirst()
+                        .ifPresent(promotion -> {
+                            table.getSelectionModel().select(promotion);
+                            promotionBox.getSelectionModel().select(promotion);
+                        });
+                detailTable.getItems().setAll(quanLyKhuyenMaiController.traCuuGameTrongKhuyenMai(selectedPromotionId));
+            } catch (SQLException exception) {
+                UiUtils.showError("Không tải được khuyến mãi", exception);
+            }
+        };
         table.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, selected) -> {
             if (selected != null) {
                 name.setText(selected.name());
@@ -2328,6 +2326,38 @@ public final class MainView extends BorderPane {
                 }
             }
         });
+        promotionBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, selected) -> {
+            if (selected != null) {
+                try {
+                    detailTable.getItems().setAll(quanLyKhuyenMaiController.traCuuGameTrongKhuyenMai(selected.promotionId()));
+                } catch (SQLException exception) {
+                    UiUtils.showError("Không tải được game trong khuyến mãi", exception);
+                }
+            }
+        });
+        create.setOnAction(event -> {
+            try {
+                int id = quanLyKhuyenMaiController.taoChuongTrinh(name.getText(), start.getValue(), end.getValue(), contentText.getText());
+                refreshPromotions.accept(id);
+                UiUtils.showInfo("Đã tạo khuyến mãi", "Chương trình #" + id + " đã được tạo.");
+            } catch (SQLException exception) {
+                UiUtils.showError("Không tạo được khuyến mãi", exception);
+            }
+        });
+        capNhatChuongTrinh.setOnAction(event -> {
+            ChuongTrinhKhuyenMai selected = table.getSelectionModel().getSelectedItem();
+            if (selected == null) {
+                UiUtils.showInfo("Chọn khuyến mãi", "Vui lòng chọn chương trình cần cập nhật.");
+                return;
+            }
+            try {
+                quanLyKhuyenMaiController.capNhatChuongTrinh(selected.promotionId(), name.getText(), start.getValue(), end.getValue(),
+                        promotionStatus.getValue(), contentText.getText());
+                refreshPromotions.accept(selected.promotionId());
+            } catch (SQLException exception) {
+                UiUtils.showError("Không cập nhật được khuyến mãi", exception);
+            }
+        });
         Button attach = UiUtils.secondaryButton("Thêm game");
         Button updateDiscount = UiUtils.secondaryButton("Cập nhật %");
         attach.setMinWidth(120);
@@ -2340,13 +2370,19 @@ public final class MainView extends BorderPane {
                     UiUtils.showInfo("Chọn dữ liệu", "Vui lòng chọn chương trình khuyến mãi và game.");
                     return;
                 }
+                BigDecimal discountPercent = moneyInput(discount);
+                if (discountPercent.compareTo(BigDecimal.ZERO) <= 0 || discountPercent.compareTo(BigDecimal.valueOf(100)) > 0) {
+                    UiUtils.showInfo("Sai % giảm", "Phần trăm giảm phải lớn hơn 0 và không vượt quá 100.");
+                    return;
+                }
                 quanLyKhuyenMaiController.ganGameVaoKhuyenMai(
                         selectedPromotion.promotionId(),
                         selectedGame.gameId(),
-                        moneyInput(discount)
+                        discountPercent
                 );
-                table.getItems().setAll(quanLyKhuyenMaiController.traCuuChuongTrinh());
-                promotionBox.getItems().setAll(quanLyKhuyenMaiController.traCuuChuongTrinh());
+                refreshPromotions.accept(selectedPromotion.promotionId());
+                gameBox.getSelectionModel().clearSelection();
+                UiUtils.showInfo("Đã thêm game", "Game đã được gắn vào chương trình khuyến mãi.");
             } catch (Exception exception) {
                 UiUtils.showError("Không thêm được game", exception);
             }
@@ -2358,19 +2394,20 @@ public final class MainView extends BorderPane {
                 return;
             }
             try {
-                quanLyKhuyenMaiController.capNhatChuongTrinhGame(selected.promotionId(), selected.gameId(), moneyInput(discount));
+                BigDecimal discountPercent = moneyInput(discount);
+                if (discountPercent.compareTo(BigDecimal.ZERO) <= 0 || discountPercent.compareTo(BigDecimal.valueOf(100)) > 0) {
+                    UiUtils.showInfo("Sai % giảm", "Phần trăm giảm phải lớn hơn 0 và không vượt quá 100.");
+                    return;
+                }
+                quanLyKhuyenMaiController.capNhatChuongTrinhGame(selected.promotionId(), selected.gameId(), discountPercent);
                 detailTable.getItems().setAll(quanLyKhuyenMaiController.traCuuGameTrongKhuyenMai(selected.promotionId()));
-                table.getItems().setAll(quanLyKhuyenMaiController.traCuuChuongTrinh());
+                refreshPromotions.accept(selected.promotionId());
             } catch (Exception exception) {
                 UiUtils.showError("Không cập nhật được mức khuyến mãi", exception);
             }
         });
 
-        try {
-            table.getItems().setAll(quanLyKhuyenMaiController.traCuuChuongTrinh());
-        } catch (SQLException exception) {
-            content.getChildren().add(errorCard("Không tải được khuyến mãi", exception));
-        }
+        refreshPromotions.accept(null);
 
         VBox createForm = UiUtils.card();
         createForm.getChildren().addAll(UiUtils.sectionTitle("Tạo chương trình"), UiUtils.formRow("Tên", name),
@@ -2525,9 +2562,22 @@ public final class MainView extends BorderPane {
         search.setOnAction(event -> reload.run());
         export.setOnAction(event -> {
             try {
-                Path file = quanLyDoanhThuController.xuatCsv(developerId == null ? "platformRevenue" : "developerRevenue",
+                FileChooser chooser = new FileChooser();
+                chooser.setTitle("Xuất báo cáo doanh thu");
+                chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV", "*.csv"));
+                chooser.setInitialFileName((developerId == null ? "platformRevenue" : "developerRevenue")
+                        + System.currentTimeMillis() + ".csv");
+                File target = chooser.showSaveDialog(getScene().getWindow());
+                if (target == null) {
+                    return;
+                }
+                Path file = target.toPath();
+                if (!file.getFileName().toString().toLowerCase().endsWith(".csv")) {
+                    file = file.resolveSibling(file.getFileName() + ".csv");
+                }
+                Path exported = quanLyDoanhThuController.xuatCsv(file,
                         List.copyOf(table.getItems()));
-                UiUtils.showInfo("Đã xuất báo cáo", "File CSV: " + file);
+                UiUtils.showInfo("Đã xuất báo cáo", "File CSV: " + exported);
             } catch (Exception exception) {
                 UiUtils.showError("Không xuất được báo cáo", exception);
             }

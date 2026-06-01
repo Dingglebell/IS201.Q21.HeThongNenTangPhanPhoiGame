@@ -5,7 +5,6 @@ import com.gameplatform.model.GameTrongKhuyenMai;
 import com.gameplatform.model.ChuongTrinhKhuyenMai;
 
 import java.math.BigDecimal;
-import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -69,11 +68,23 @@ public final class QuanLyKhuyenMaiController {
 
     public void ganGameVaoKhuyenMai(int promotionId, int gameId, BigDecimal discountPercent) throws SQLException {
         try (Connection connection = Database.getConnection();
-             CallableStatement statement = connection.prepareCall("{call SP_ThemGameVaoKhuyenMai(?, ?, ?)}")) {
+             PreparedStatement statement = connection.prepareStatement("""
+                     MERGE INTO ChiTietKhuyenMai target
+                     USING (
+                         SELECT ? AS MaKM, ? AS MaGame, ? AS PhanTramKM
+                         FROM dual
+                     ) source
+                     ON (target.MaKM = source.MaKM AND target.MaGame = source.MaGame)
+                     WHEN MATCHED THEN
+                         UPDATE SET target.PhanTramKM = source.PhanTramKM
+                     WHEN NOT MATCHED THEN
+                         INSERT (MaKM, MaGame, PhanTramKM)
+                         VALUES (source.MaKM, source.MaGame, source.PhanTramKM)
+                     """)) {
             statement.setInt(1, promotionId);
             statement.setInt(2, gameId);
             statement.setBigDecimal(3, discountPercent);
-            statement.execute();
+            statement.executeUpdate();
         }
     }
 
