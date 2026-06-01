@@ -13,9 +13,9 @@ import java.util.List;
 
 public final class QuanLyYeuCauPhatHanhController {
 
-    private static final int MUC_CO_LAP_XU_LY_DONG_THOI = Connection.TRANSACTION_READ_COMMITTED;
+    private static final int MUC_CO_LAP_XU_LY_DONG_THOI = Connection.TRANSACTION_SERIALIZABLE;
 
-    private static final int DEMO_DO_TRE_LOST_UPDATE_GIAY = 5;
+    private static final int DEMO_DO_TRE_LOST_UPDATE_GIAY = 3;
 
     private static final String REQUEST_SELECT = """
             SELECT yc.MaYeuCau,
