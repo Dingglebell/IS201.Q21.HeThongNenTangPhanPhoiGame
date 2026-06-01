@@ -17,14 +17,8 @@ public final class App extends Application {
         stage.setTitle("Arcadia - Hệ thống quản lý nền tảng phân phối game");
         stage.setMinWidth(1180);
         stage.setMinHeight(760);
-        stage.maximizedProperty().addListener((observable, wasMaximized, isMaximized) -> {
-            if (!isMaximized) {
-                stage.setMaximized(true);
-            }
-        });
         showLogin();
         stage.show();
-        keepMaximized();
     }
 
     private void showLogin() {
@@ -32,7 +26,6 @@ public final class App extends Application {
         Scene scene = new Scene(loginView, 1180, 760);
         scene.getStylesheets().add(getClass().getResource("/css/app.css").toExternalForm());
         primaryStage.setScene(scene);
-        keepMaximized();
     }
 
     private void showMain(TaiKhoanDangNhap sessionUser) {
@@ -40,13 +33,6 @@ public final class App extends Application {
         Scene scene = new Scene(mainView, 1180, 760);
         scene.getStylesheets().add(getClass().getResource("/css/app.css").toExternalForm());
         primaryStage.setScene(scene);
-        keepMaximized();
-    }
-
-    private void keepMaximized() {
-        if (primaryStage != null && primaryStage.isShowing()) {
-            primaryStage.setMaximized(true);
-        }
     }
 
     public static void main(String[] args) {
