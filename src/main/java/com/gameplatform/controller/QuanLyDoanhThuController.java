@@ -72,21 +72,44 @@ public final class QuanLyDoanhThuController {
 
     private List<DongBaoCaoDoanhThu> queryRevenue(Integer developerId, LocalDate fromDate, LocalDate toDate) throws SQLException {
         String sql = """
-                SELECT g.MaGame,
-                       g.TenGame,
-                       npt.TenNPT,
+                WITH DongGiaoDich AS (
+                    SELECT gd.MaGD,
+                           g.MaGame,
+                           g.TenGame,
+                           npt.TenNPT,
+                           npt.TyLeChiaSe,
+                           ct.GiaBan,
+                           gd.TongThanhToan,
+                           SUM(ct.GiaBan) OVER (PARTITION BY gd.MaGD) AS TongGiaBanGiaoDich
+                    FROM GiaoDich gd
+                    JOIN ChiTietGiaoDich ct ON ct.MaGD = gd.MaGD
+                    JOIN Game g ON g.MaGame = ct.MaGame
+                    JOIN NhaPhatTrien npt ON npt.MaNPT = g.MaNPT
+                    WHERE gd.TrangThai = 'Thành công'
+                      AND TRUNC(gd.NgayGD) BETWEEN ? AND ?
+                      AND (? IS NULL OR g.MaNPT = ?)
+                ),
+                DoanhThuPhanBo AS (
+                    SELECT MaGame,
+                           TenGame,
+                           TenNPT,
+                           TyLeChiaSe,
+                           CASE
+                               WHEN TongGiaBanGiaoDich > 0
+                               THEN TongThanhToan * GiaBan / TongGiaBanGiaoDich
+                               ELSE 0
+                           END AS DoanhThuSauVoucher
+                    FROM DongGiaoDich
+                )
+                SELECT MaGame,
+                       TenGame,
+                       TenNPT,
                        COUNT(*) AS SoLuongBan,
-                       NVL(SUM(ct.GiaBan), 0) AS DoanhThuGoc,
-                       NVL(SUM(ct.GiaBan * npt.TyLeChiaSe), 0) AS DoanhThuNPT,
-                       NVL(SUM(ct.GiaBan * (1 - npt.TyLeChiaSe)), 0) AS DoanhThuNenTang
-                FROM GiaoDich gd
-                JOIN ChiTietGiaoDich ct ON ct.MaGD = gd.MaGD
-                JOIN Game g ON g.MaGame = ct.MaGame
-                JOIN NhaPhatTrien npt ON npt.MaNPT = g.MaNPT
-                WHERE gd.TrangThai = 'Thành công'
-                  AND TRUNC(gd.NgayGD) BETWEEN ? AND ?
-                  AND (? IS NULL OR g.MaNPT = ?)
-                GROUP BY g.MaGame, g.TenGame, npt.TenNPT
+                       NVL(SUM(DoanhThuSauVoucher), 0) AS DoanhThuGoc,
+                       NVL(SUM(DoanhThuSauVoucher * TyLeChiaSe), 0) AS DoanhThuNPT,
+                       NVL(SUM(DoanhThuSauVoucher * (1 - TyLeChiaSe)), 0) AS DoanhThuNenTang
+                FROM DoanhThuPhanBo
+                GROUP BY MaGame, TenGame, TenNPT
                 ORDER BY DoanhThuGoc DESC
                 """;
         List<DongBaoCaoDoanhThu> rows = new ArrayList<>();

@@ -143,9 +143,11 @@ CREATE OR REPLACE PROCEDURE SP_TaoGiaoDichTuGioHang(
 IS
     vSoGame NUMBER;
     vTongTienGoc NUMBER := 0;
-    vTongGiamKM NUMBER := 0;
-    vTongGiaBan NUMBER := 0;
-    vSoTienGiamCode NUMBER := 0;
+    vTongGiamGiaGame NUMBER := 0;
+    vTongSauKhuyenMaiGame NUMBER := 0;
+    vSoTienGiamVoucher NUMBER := 0;
+    vTongGiamGia NUMBER := 0;
+    vTongThanhToan NUMBER := 0;
     vMaMaGiamGia NUMBER;
     vGiaHienTai NUMBER;
 BEGIN
@@ -162,13 +164,13 @@ BEGIN
     ) LOOP
         vGiaHienTai := SF_TinhGiaHienTai(item.MaGame);
         vTongTienGoc := vTongTienGoc + item.GiaGoc;
-        vTongGiamKM := vTongGiamKM + (item.GiaGoc - vGiaHienTai);
-        vTongGiaBan := vTongGiaBan + vGiaHienTai;
+        vTongGiamGiaGame := vTongGiamGiaGame + (item.GiaGoc - vGiaHienTai);
+        vTongSauKhuyenMaiGame := vTongSauKhuyenMaiGame + vGiaHienTai;
     END LOOP;
 
     IF pCode IS NOT NULL THEN
-        vSoTienGiamCode := SF_KiemTraMaGiamGia(pCode, vTongGiaBan);
-        IF vSoTienGiamCode < 0 THEN
+        vSoTienGiamVoucher := SF_KiemTraMaGiamGia(pCode, vTongSauKhuyenMaiGame);
+        IF vSoTienGiamVoucher < 0 THEN
             RAISE_APPLICATION_ERROR(-20108, 'Mã giảm giá không hợp lệ, hết hạn hoặc đã vượt giới hạn sử dụng.');
         END IF;
 
@@ -178,6 +180,11 @@ BEGIN
         WHERE UPPER(Code) = UPPER(pCode);
     END IF;
 
+    -- Mã giảm giá là ưu đãi cấp đơn hàng: chỉ trừ một lần trên tổng giỏ hàng.
+    vSoTienGiamVoucher := LEAST(NVL(vSoTienGiamVoucher, 0), vTongSauKhuyenMaiGame);
+    vTongGiamGia := vTongGiamGiaGame + vSoTienGiamVoucher;
+    vTongThanhToan := GREATEST(vTongSauKhuyenMaiGame - vSoTienGiamVoucher, 0);
+
     pMaGD := SEQ_GiaoDich.NEXTVAL;
     INSERT INTO GiaoDich (MaGD, MaNguoiChoi, MaMaGiamGia, TongTienGoc, TongGiamGia, TongThanhToan, PhuongThucThanhToan, TrangThai)
     VALUES (
@@ -185,8 +192,8 @@ BEGIN
         pMaNguoiChoi,
         vMaMaGiamGia,
         vTongTienGoc,
-        vTongGiamKM + NVL(vSoTienGiamCode, 0),
-        GREATEST(vTongGiaBan - NVL(vSoTienGiamCode, 0), 0),
+        vTongGiamGia,
+        vTongThanhToan,
         NVL(pPhuongThucThanhToan, 'Ví điện tử'),
         'Chờ thanh toán'
     );

@@ -114,15 +114,23 @@ RETURN NUMBER
 IS
     vDoanhThu NUMBER;
 BEGIN
-    SELECT NVL(SUM(ct.GiaBan * npt.TyLeChiaSe), 0)
+    SELECT NVL(SUM(DoanhThuSauVoucher * TyLeChiaSe), 0)
     INTO vDoanhThu
-    FROM GiaoDich gd
-    JOIN ChiTietGiaoDich ct ON ct.MaGD = gd.MaGD
-    JOIN Game g ON g.MaGame = ct.MaGame
-    JOIN NhaPhatTrien npt ON npt.MaNPT = g.MaNPT
-    WHERE g.MaNPT = pMaNPT
-      AND gd.TrangThai = 'Thành công'
-      AND TRUNC(gd.NgayGD) BETWEEN TRUNC(pTuNgay) AND TRUNC(pDenNgay);
+    FROM (
+        SELECT npt.TyLeChiaSe,
+               CASE
+                   WHEN SUM(ct.GiaBan) OVER (PARTITION BY gd.MaGD) > 0
+                   THEN gd.TongThanhToan * ct.GiaBan / SUM(ct.GiaBan) OVER (PARTITION BY gd.MaGD)
+                   ELSE 0
+               END AS DoanhThuSauVoucher
+        FROM GiaoDich gd
+        JOIN ChiTietGiaoDich ct ON ct.MaGD = gd.MaGD
+        JOIN Game g ON g.MaGame = ct.MaGame
+        JOIN NhaPhatTrien npt ON npt.MaNPT = g.MaNPT
+        WHERE g.MaNPT = pMaNPT
+          AND gd.TrangThai = 'Thành công'
+          AND TRUNC(gd.NgayGD) BETWEEN TRUNC(pTuNgay) AND TRUNC(pDenNgay)
+    );
     RETURN vDoanhThu;
 END;
 /

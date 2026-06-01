@@ -281,10 +281,10 @@ INSERT INTO ChiTietKhuyenMai (MaKM, MaGame, PhanTramKM) VALUES (3, 12, 15);
 INSERT INTO ChiTietKhuyenMai (MaKM, MaGame, PhanTramKM) VALUES (3, 15, 30);
 
 INSERT INTO MaGiamGia (MaMaGiamGia, Code, SoTienGiam, GioiHanSuDung, LuotDung, NgayBatDau, NgayHetHan, TongGiaToiThieu, TrangThai, MoTa)
-VALUES (4, 'DEMO100', 100000, 20, 2, DATE '2026-05-24', DATE '2026-06-30', 250000, 'Đang hiệu lực', 'Mã giảm sâu để demo thanh toán giỏ hàng nhiều game.');
+VALUES (4, 'DEMO100', 100000, 20, 2, DATE '2026-05-24', DATE '2026-06-30', 200000, 'Đang hiệu lực', 'Mã giảm sâu để demo thanh toán giỏ hàng nhiều game.');
 
 INSERT INTO GiaoDich (MaGD, MaNguoiChoi, MaMaGiamGia, TongTienGoc, TongGiamGia, TongThanhToan, PhuongThucThanhToan, NgayGD, TrangThai)
-VALUES (5, 5, 4, 319000, 124000, 195000, 'Ví điện tử', DATE '2026-05-26', 'Thành công');
+VALUES (5, 5, 4, 319000, 183700, 135300, 'Ví điện tử', DATE '2026-05-26', 'Thành công');
 INSERT INTO ChiTietGiaoDich (MaGD, MaGame, GiaGoc, SoTienGiamKM, GiaBan)
 VALUES (5, 11, 120000, 24000, 96000);
 INSERT INTO ChiTietGiaoDich (MaGD, MaGame, GiaGoc, SoTienGiamKM, GiaBan)
